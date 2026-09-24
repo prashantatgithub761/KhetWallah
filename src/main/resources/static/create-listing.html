@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Post a crop | KhetWallah</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f5f7f2;
+            color: #203326;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        main {
+            max-width: 560px;
+            margin: 24px auto;
+            padding: 28px;
+            background: white;
+            border: 1px solid #dbe4d9;
+            border-radius: 12px;
+        }
+
+        a { color: #174c35; }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #879b8b;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        button {
+            margin-top: 24px;
+            padding: 12px 20px;
+            background: #174c35;
+            color: white;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        :focus-visible {
+            outline: 3px solid #d49b24;
+            outline-offset: 3px;
+        }
+
+        #message { white-space: pre-line; }
+    </style>
+</head>
+
+<body>
+<main>
+    <a href="/">← Browse crops</a>
+
+    <h1>Post a crop</h1>
+    <p>Your listing will be published under your account’s display name.</p>
+
+    <form id="listing-form">
+        <label for="produce-name">Crop name</label>
+        <input id="produce-name" required maxlength="100"
+               placeholder="For example, Onion">
+
+        <label for="quantity">Available quantity (kg)</label>
+        <input id="quantity" type="number" required
+               min="0.01" max="99999999.99" step="0.01">
+
+        <label for="price">Price per kg (₹)</label>
+        <input id="price" type="number" required
+               min="0.01" max="99999999.99" step="0.01">
+
+        <label for="pickup-area">Pickup area</label>
+        <input id="pickup-area" required maxlength="150"
+               placeholder="For example, Meerut">
+
+        <button id="submit-button" type="submit">Publish listing</button>
+    </form>
+
+    <p id="message" role="status"></p>
+    <a id="login-link" href="/login" hidden>Sign in again</a>
+</main>
+
+<script>
+    const form = document.getElementById("listing-form");
+    const submitButton = document.getElementById("submit-button");
+    const message = document.getElementById("message");
+    const loginLink = document.getElementById("login-link");
+
+    let submitting = false;
+
+    async function readJson(response) {
+        const contentType = response.headers.get("Content-Type") || "";
+
+        if (!contentType.includes("application/json")) {
+            throw new Error("Unexpected response. Check your login and try again.");
+        }
+
+        return response.json();
+    }
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (submitting) {
+            return;
+        }
+
+        submitting = true;
+        submitButton.disabled = true;
+        loginLink.hidden = true;
+        message.textContent = "Publishing your listing…";
+
+        try {
+            // Obtain a token belonging to this browser's session.
+            const csrfResponse = await fetch("/api/csrf", {
+                headers: { "Accept": "application/json" },
+                redirect: "error"
+            });
+
+            if (!csrfResponse.ok) {
+                throw new Error("Could not prepare the request. Refresh and try again.");
+            }
+
+            const csrf = await readJson(csrfResponse);
+
+            const request = {
+                produceName: document.getElementById("produce-name").value.trim(),
+                availableQuantityKg: Number(document.getElementById("quantity").value),
+                pricePerKg: Number(document.getElementById("price").value),
+                pickupArea: document.getElementById("pickup-area").value.trim()
+            };
+
+            const response = await fetch("/api/listings", {
+                method: "POST",
+                redirect: "manual",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    [csrf.headerName]: csrf.token
+                },
+                body: JSON.stringify(request)
+            });
+
+            if (response.type === "opaqueredirect"
+                    || response.status === 401) {
+                loginLink.hidden = false;
+                throw new Error("Please sign in again before publishing.");
+            }
+
+            if (response.status === 403) {
+                throw new Error("The request was rejected. Refresh the page and try again.");
+            }
+
+            const data = await readJson(response);
+
+            if (!response.ok) {
+                const fieldMessages = Object.values(data.fieldErrors || {});
+
+                throw new Error(
+                    fieldMessages.length > 0
+                        ? fieldMessages.join("\n")
+                        : data.message || "Could not publish the listing."
+                );
+            }
+
+            message.textContent =
+            `Your ${data.produceName} listing has been published successfully!`;
+
+            form.reset();
+        } catch (error) {
+            message.textContent =
+                error instanceof TypeError
+                    ? "Connection problem. Check MySQL/API results before retrying; the request may have reached the server."
+                    : error.message;
+        } finally {
+            submitting = false;
+            submitButton.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My listings | KhetWallah</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: #f5f7f2;
+            color: #203326;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 32px auto;
+            padding: 0 20px;
+        }
+
+        a { color: #174c35; }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border: 1px solid #dbe4d9;
+            border-radius: 12px;
+        }
+
+        .card h2 { margin-top: 0; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .active {
+            background: #e2f2e5;
+            color: #174c35;
+        }
+
+        .closed {
+            background: #eeeeee;
+            color: #555555;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: 0;
+            border-radius: 8px;
+            background: #174c35;
+            color: white;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+
+        :focus-visible {
+            outline: 3px solid #d49b24;
+            outline-offset: 3px;
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <nav aria-label="Main navigation">
+        <a href="/">← Browse crops</a>
+        <a href="/create-listing.html">Post a crop</a>
+    </nav>
+
+    <h1>My listings</h1>
+    <p>Your active crops and closed listing history.</p>
+
+    <p id="message" role="status">Loading your listings…</p>
+    <a id="login-link" href="/login" hidden>Sign in again</a>
+
+    <div id="listings" class="grid"></div>
+
+    <nav aria-label="Listing pages">
+        <button id="previous" type="button" disabled>Previous</button>
+        <span id="page-label"></span>
+        <button id="next" type="button" disabled>Next</button>
+        <button id="refresh" type="button">Refresh</button>
+    </nav>
+</main>
+
+<script>
+    const container = document.getElementById("listings");
+    const message = document.getElementById("message");
+    const loginLink = document.getElementById("login-link");
+    const previousButton = document.getElementById("previous");
+    const nextButton = document.getElementById("next");
+    const refreshButton = document.getElementById("refresh");
+    const pageLabel = document.getElementById("page-label");
+
+    const currency = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR"
+    });
+
+    let currentPage = 0;
+
+    function addText(parent, tag, text, className) {
+        const element = document.createElement(tag);
+        element.textContent = text;
+
+        if (className) {
+            element.className = className;
+        }
+
+        parent.appendChild(element);
+    }
+
+    async function loadMyListings(page) {
+        previousButton.disabled = true;
+        nextButton.disabled = true;
+        refreshButton.disabled = true;
+        loginLink.hidden = true;
+
+        container.replaceChildren();
+        container.setAttribute("aria-busy", "true");
+        pageLabel.textContent = "";
+        message.textContent = "Loading your listings…";
+
+        try {
+            const response = await fetch(
+                `/api/me/listings?page=${page}&size=6`,
+                {
+                    headers: { "Accept": "application/json" },
+                    redirect: "manual"
+                }
+            );
+
+            if (response.type === "opaqueredirect"
+                    || response.status === 401) {
+                loginLink.hidden = false;
+                message.textContent = "Please sign in to view your listings.";
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Unable to load your listings.");
+            }
+
+            const data = await response.json();
+
+            if (page > 0 && data.content.length === 0) {
+                await loadMyListings(0);
+                return;
+            }
+
+            currentPage = data.page;
+
+            for (const listing of data.content) {
+                const card = document.createElement("article");
+                card.className = "card";
+
+                addText(card, "h2", listing.produceName);
+
+                addText(
+                    card,
+                    "span",
+                    listing.status,
+                    listing.status === "ACTIVE"
+                        ? "badge active"
+                        : "badge closed"
+                );
+
+                addText(card, "p", `Listing ID: ${listing.id}`);
+                addText(
+                    card,
+                    "p",
+                    `${currency.format(listing.pricePerKg)} / kg`
+                );
+                addText(
+                    card,
+                    "p",
+                    `Quantity: ${listing.availableQuantityKg} kg`
+                );
+                addText(card, "p", `Pickup: ${listing.pickupArea}`);
+
+                if (listing.status === "ACTIVE") {
+                   const edit = document.createElement("button");
+                   edit.type = "button";
+                   edit.textContent = "Edit";
+                   edit.addEventListener("click", () => editListing(listing));
+
+                   const close = document.createElement("button");
+                   close.type = "button";
+                   close.textContent = "Close listing";
+                   close.style.marginLeft = "10px";
+                   close.addEventListener("click", () => {
+                       if (confirm(`Close your ${listing.produceName} listing?`)) {
+                           changeListing(`/api/listings/${listing.id}/close`, "POST");
+                       }
+                   });
+
+                   card.append(edit, close);
+                }
+
+                container.appendChild(card);
+            }
+
+            message.textContent = data.totalElements === 0
+                ? "You haven't posted any crops yet. Choose Post a crop to begin."
+                : `${data.totalElements} listing(s), including active and closed.`;
+
+            pageLabel.textContent = data.totalPages === 0
+                ? "No pages"
+                : `Page ${data.page + 1} of ${data.totalPages}`;
+
+            previousButton.disabled = data.page === 0;
+            nextButton.disabled = data.page + 1 >= data.totalPages;
+        } catch (error) {
+            message.textContent =
+                "We couldn't load your listings. Please try Refresh.";
+        } finally {
+            refreshButton.disabled = false;
+            container.setAttribute("aria-busy", "false");
+        }
+    }
+
+    previousButton.addEventListener("click", () => {
+        loadMyListings(currentPage - 1);
+    });
+
+    nextButton.addEventListener("click", () => {
+        loadMyListings(currentPage + 1);
+    });
+
+    refreshButton.addEventListener("click", () => {
+        loadMyListings(currentPage);
+    });
+
+    loadMyListings(0);
+
+    let saving = false;
+
+function editListing(listing) {
+    if (saving) return;
+
+    const quantity = prompt(
+        "Available quantity in kg:",
+        listing.availableQuantityKg
+    );
+    if (quantity === null) return;
+
+    const price = prompt("Price per kg in ₹:", listing.pricePerKg);
+    if (price === null) return;
+
+    const area = prompt("Pickup area:", listing.pickupArea);
+    if (area === null) return;
+
+    if (!quantity.trim() || !price.trim()
+            || !Number.isFinite(Number(quantity))
+            || !Number.isFinite(Number(price))
+            || Number(quantity) < 0
+            || Number(price) <= 0
+            || !area.trim()) {
+        message.textContent =
+            "Enter a valid quantity, a positive price, and a pickup area.";
+        return;
+    }
+
+    changeListing(`/api/listings/${listing.id}/details`, "PUT", {
+        availableQuantityKg: Number(quantity),
+        pricePerKg: Number(price),
+        pickupArea: area.trim()
+    });
+}
+
+async function changeListing(url, method, body) {
+    if (saving) return;
+    saving = true;
+
+    const buttons = [...container.querySelectorAll("button")];
+    buttons.forEach(button => button.disabled = true);
+    message.textContent = "Saving…";
+
+    try {
+        const tokenResponse = await fetch("/api/csrf", {
+            redirect: "error"
+        });
+        if (!tokenResponse.ok) {
+            throw new Error("Could not prepare the request. Refresh and try again.");
+        }
+
+        const csrf = await tokenResponse.json();
+
+        const response = await fetch(url, {
+            method,
+            redirect: "manual",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                [csrf.headerName]: csrf.token
+            },
+            body: body === undefined ? undefined : JSON.stringify(body)
+        });
+
+        if (response.type === "opaqueredirect"
+                || response.status === 401) {
+            loginLink.hidden = false;
+            throw new Error("Your session expired. Please sign in again.");
+        }
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            const details = Object.values(error.fieldErrors || {});
+            throw new Error(
+                details.join(" ") || error.message
+                || `Request rejected (${response.status}). Refresh and try again.`
+            );
+        }
+
+        await loadMyListings(currentPage);
+    } catch (error) {
+        message.textContent = error instanceof TypeError
+            ? "Connection problem. Refresh to check whether the change was saved."
+            : error.message;
+    } finally {
+        saving = false;
+        buttons.forEach(button => button.disabled = false);
+    }
+}
+</script>
+</body>
+</html>

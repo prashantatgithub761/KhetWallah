@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KhetWallah | Browse crops</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7f2;
+            color: #203326;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        header {
+            background: #174c35;
+            color: white;
+            padding: 20px;
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        header a {
+            color: white;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        .intro {
+            color: #526256;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .card {
+            padding: 24px;
+            background: white;
+            border: 1px solid #dbe4d9;
+            border-radius: 12px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .price {
+            color: #174c35;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: 0;
+            border-radius: 8px;
+            background: #174c35;
+            color: white;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid #d49b24;
+            outline-offset: 4px;
+        }
+    .search-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 16px;
+    margin: 24px 0;
+    padding: 20px;
+    border: 1px solid #dbe4d9;
+    border-radius: 12px;
+    background: white;
+}
+
+.search-controls label {
+    display: flex;
+    flex: 1 1 200px;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.search-controls input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #879b8b;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.search-controls input:focus-visible {
+    outline: 3px solid #d49b24;
+    outline-offset: 2px;
+}
+#account-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
+    </style>
+</head>
+
+<body>
+<header>
+    <div class="header-content">
+        <span class="brand">🌾 KhetWallah</span>
+        <div id="account-navigation">
+            <a href="/login">Sign in</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <h1>Fresh produce from local farmers</h1>
+    <p class="intro">
+        Explore available crops, prices, and pickup locations.
+    </p>
+    <form id="search-form">
+        <fieldset id="search-controls" class="search-controls">
+            <legend>Find produce</legend>
+
+            <label>
+                Crop name
+                <input
+                        id="crop-search"
+                        type="search"
+                        placeholder="For example, Onion"
+                        maxlength="100"
+                >
+            </label>
+
+            <label>
+                Pickup area
+                <input
+                        id="area-search"
+                        type="search"
+                        placeholder="For example, Meerut"
+                        maxlength="150"
+                >
+            </label>
+
+            <button type="submit">Search</button>
+        </fieldset>
+    </form>
+
+    <p id="message" role="status">Loading listings…</p>
+
+    <div id="listings" class="grid" aria-label="Available crop listings"></div>
+
+    <nav class="pagination" aria-label="Listing pages">
+        <button id="previous" type="button" disabled>Previous</button>
+        <span id="page-label"></span>
+        <button id="next" type="button" disabled>Next</button>
+        <button id="reload" type="button">Refresh</button>
+    </nav>
+</main>
+
+<script>
+    const listingsElement = document.getElementById("listings");
+    const messageElement = document.getElementById("message");
+    const pageLabel = document.getElementById("page-label");
+    const previousButton = document.getElementById("previous");
+    const nextButton = document.getElementById("next");
+    const reloadButton = document.getElementById("reload");
+
+    const currency = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR"
+    });
+
+    let currentPage = 0;
+    const searchForm = document.getElementById("search-form");
+const searchControls = document.getElementById("search-controls");
+const cropSearch = document.getElementById("crop-search");
+const areaSearch = document.getElementById("area-search");
+
+let selectedCrop = "";
+let selectedArea = "";
+
+    function addText(parent, tag, text, className) {
+        const element = document.createElement(tag);
+        element.textContent = text;
+
+        if (className) {
+            element.className = className;
+        }
+
+        parent.appendChild(element);
+    }
+
+    async function loadListings(page) {
+    searchControls.disabled = true;
+
+
+        previousButton.disabled = true;
+        nextButton.disabled = true;
+        reloadButton.disabled = true;
+
+        listingsElement.replaceChildren();
+        pageLabel.textContent = "";
+        messageElement.textContent = "Loading listings…";
+        listingsElement.setAttribute("aria-busy", "true");
+
+        try {
+            const params = new URLSearchParams({
+    page: String(page),
+    size: "6",
+    produceName: selectedCrop,
+    area: selectedArea
+});
+
+const response = await fetch(
+    `/api/listings?${params.toString()}`,
+    { headers: { "Accept": "application/json" } }
+);
+
+            if (!response.ok) {
+                throw new Error("Unable to load listings");
+            }
+
+            const data = await response.json();
+
+            // If listings disappeared, return to the first page.
+            if (page > 0 && data.content.length === 0) {
+                await loadListings(0);
+                return;
+            }
+
+            currentPage = data.page;
+
+            for (const listing of data.content) {
+                const card = document.createElement("article");
+                card.className = "card";
+
+                addText(card, "h2", listing.produceName);
+                addText(
+                    card,
+                    "p",
+                    `${currency.format(listing.pricePerKg)} / kg`,
+                    "price"
+                );
+                addText(card, "p", `Farmer: ${listing.farmerName}`);
+                addText(
+                    card,
+                    "p",
+                    `Available: ${listing.availableQuantityKg} kg`
+                );
+                addText(card, "p", `Pickup: ${listing.pickupArea}`);
+
+                listingsElement.appendChild(card);
+            }
+
+            messageElement.textContent = data.totalElements === 0
+                ? "No active listings match. Try another crop or area."
+                : `${data.totalElements} active listing(s) available.`;
+
+            pageLabel.textContent = data.totalPages === 0
+                ? "No pages"
+                : `Page ${data.page + 1} of ${data.totalPages}`;
+
+            previousButton.disabled = data.page === 0;
+            nextButton.disabled = data.page + 1 >= data.totalPages;
+        } catch (error) {
+            messageElement.textContent =
+                "We couldn't load the crops. Please try Refresh.";
+        } finally {
+        reloadButton.disabled = false;
+        searchControls.disabled = false;
+        listingsElement.setAttribute("aria-busy", "false");
+        }
+    }
+
+    previousButton.addEventListener("click", () => {
+        loadListings(currentPage - 1);
+    });
+
+    nextButton.addEventListener("click", () => {
+        loadListings(currentPage + 1);
+    });
+
+    reloadButton.addEventListener("click", () => {
+        loadListings(currentPage);
+    });
+
+    searchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (searchControls.disabled) {
+        return;
+    }
+
+    selectedCrop = cropSearch.value.trim();
+    selectedArea = areaSearch.value.trim();
+
+    loadListings(0);
+});
+
+    loadListings(0);
+    async function loadAccountNavigation() {
+    const navigation = document.getElementById("account-navigation");
+
+    try {
+        const response = await fetch("/api/auth/me", {
+            headers: { "Accept": "application/json" },
+            redirect: "manual"
+        });
+
+        // Signed-out requests may redirect to the login page.
+        if (response.type === "opaqueredirect"
+                || response.status === 401
+                || response.status === 403) {
+            return;
+        }
+
+        if (!response.ok) {
+            return;
+        }
+
+        const account = await response.json();
+
+        navigation.replaceChildren();
+
+        const greeting = document.createElement("span");
+        greeting.textContent = `Hello, ${account.displayName}`;
+        navigation.appendChild(greeting);
+
+        const createLink = document.createElement("a");
+        createLink.href = "/create-listing.html";
+        createLink.textContent = "Post a crop";
+        navigation.appendChild(createLink);
+        const myListingsLink = document.createElement("a");
+        myListingsLink.href = "/my-listings.html";
+        myListingsLink.textContent = "My listings";
+        navigation.appendChild(myListingsLink);
+
+        const logoutLink = document.createElement("a");
+        logoutLink.href = "/logout";
+        logoutLink.textContent = "Sign out";
+        navigation.appendChild(logoutLink);
+    } catch (error) {
+        // Keep the existing Sign in link if the account check fails.
+        console.error("Could not load account navigation", error);
+    }
+}
+
+loadAccountNavigation();
+</script>
+</body>
+</html>
