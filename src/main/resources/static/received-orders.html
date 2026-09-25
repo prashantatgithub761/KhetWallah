@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Orders Received | KhetWallah</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background: #f5f7f2;
+            color: #203326;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+        }
+        main { max-width: 900px; margin: 32px auto; padding: 20px; }
+        a { color: #174c35; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        article {
+            background: white;
+            border: 1px solid #dbe4d9;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        article h2 { margin-top: 0; }
+        nav { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+        button {
+            background: #174c35;
+            color: white;
+            border: 0;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font: inherit;
+            cursor: pointer;
+        }
+        button:disabled { opacity: 0.45; cursor: default; }
+        :focus-visible { outline: 3px solid #d49b24; outline-offset: 3px; }
+        .order-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+        .pickup-form { display: grid; gap: 10px; margin-top: 16px; }
+        .pickup-form label { display: grid; gap: 4px; font-weight: bold; }
+        .pickup-form input, .pickup-form textarea {
+            width: 100%; min-width: 0; border: 1px solid #a9b9a8;
+            border-radius: 6px; padding: 10px; font: inherit;
+        }
+        .pickup-details { white-space: pre-wrap; overflow-wrap: anywhere; }
+        .pickup-note { font-size: 0.9em; }
+    </style>
+</head>
+<body data-orders-view="farmer">
+<main>
+    <a href="/">← Browse crops</a>
+    <h1>Order Received</h1>
+    <p>Orders buyers placed for your crops.</p>
+
+    <p id="message" role="status">Loading orders…</p>
+    <a id="login-link" href="/login" hidden>Sign in again</a>
+    <div id="orders" class="grid"></div>
+
+    <nav aria-label="Order pages">
+        <button id="previous" disabled>Previous</button>
+        <span id="page-label"></span>
+        <button id="next" disabled>Next</button>
+        <button id="refresh">Refresh</button>
+    </nav>
+</main>
+
+<script src="/orders.js" defer></script>
+</body>
+</html>

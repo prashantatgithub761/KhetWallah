@@ -108,7 +108,7 @@
         <button id="refresh" type="button">Refresh</button>
     </nav>
 </main>
-
+<script src="/listing-photos.js"></script>
 <script>
     const container = document.getElementById("listings");
     const message = document.getElementById("message");
@@ -179,6 +179,7 @@
             for (const listing of data.content) {
                 const card = document.createElement("article");
                 card.className = "card";
+                renderListingPhoto(card, listing);
 
                 addText(card, "h2", listing.produceName);
 
@@ -221,6 +222,7 @@
                    });
 
                    card.append(edit, close);
+                   addListingPhotoUploader(card, listing);
                 }
 
                 container.appendChild(card);

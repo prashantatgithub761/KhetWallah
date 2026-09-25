@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create account | KhetWallah</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f5f7f2;
+            color: #203326;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+        main {
+            max-width: 480px;
+            margin: 32px auto;
+            padding: 28px;
+            background: white;
+            border: 1px solid #dbe4d9;
+            border-radius: 12px;
+        }
+        a { color: #174c35; }
+        label { display: block; margin-top: 18px; font-weight: bold; }
+        input {
+            width: 100%;
+            margin-top: 6px;
+            padding: 12px;
+            border: 1px solid #879b8b;
+            border-radius: 6px;
+            font: inherit;
+        }
+        button {
+            margin-top: 24px;
+            padding: 12px 20px;
+            background: #174c35;
+            color: white;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            cursor: pointer;
+        }
+        button:disabled { opacity: 0.5; cursor: default; }
+        :focus-visible { outline: 3px solid #d49b24; outline-offset: 3px; }
+        #message { white-space: pre-line; }
+    </style>
+</head>
+<body>
+<main>
+    <a href="/">← Browse crops</a>
+    <h1>Create your account</h1>
+    <p>Use one account to buy and sell produce.</p>
+
+    <form id="register-form">
+        <label for="display-name">Display name</label>
+        <input id="display-name" required maxlength="100"
+               autocomplete="name">
+
+        <label for="email">Email</label>
+        <input id="email" type="email" required maxlength="254"
+               autocomplete="email">
+
+        <label for="password">Password</label>
+        <input id="password" type="password" required
+               minlength="15" maxlength="128"
+               autocomplete="new-password" aria-describedby="password-help">
+        <small id="password-help">Use 15–128 characters.</small>
+
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" type="password" required
+               minlength="15" maxlength="128"
+               autocomplete="new-password">
+
+        <button id="submit-button" type="submit">Create account</button>
+    </form>
+
+    <p id="message" role="status"></p>
+    <p>Already registered? <a href="/login">Sign in</a></p>
+</main>
+
+<script>
+    const form = document.getElementById("register-form");
+    const button = document.getElementById("submit-button");
+    const message = document.getElementById("message");
+
+    let submitting = false;
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (submitting) return;
+
+        const password = document.getElementById("password").value;
+        const confirmation = document.getElementById("confirm-password").value;
+
+        if (password !== confirmation) {
+            message.textContent = "The passwords do not match.";
+            return;
+        }
+
+        submitting = true;
+        button.disabled = true;
+        message.textContent = "Creating your account…";
+
+        try {
+            const tokenResponse = await fetch("/api/csrf", {
+                redirect: "error"
+            });
+
+            if (!tokenResponse.ok) {
+                throw new Error("Could not prepare registration. Refresh and try again.");
+            }
+
+            const csrf = await tokenResponse.json();
+
+            const response = await fetch("/api/auth/register", {
+                method: "POST",
+                redirect: "error",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    [csrf.headerName]: csrf.token
+                },
+                body: JSON.stringify({
+                    displayName: document.getElementById("display-name").value.trim(),
+                    email: document.getElementById("email").value.trim(),
+                    password: password
+                })
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                const details = Object.values(data.fieldErrors || {});
+                throw new Error(
+                    details.join("\n") || data.message
+                    || `Registration failed (${response.status}).`
+                );
+            }
+
+            form.reset();
+            message.textContent = "Account created successfully. You can now sign in.";
+        } catch (error) {
+            message.textContent = error instanceof TypeError
+                ? "Connection problem. The account may have been created; try signing in before registering again."
+                : error.message;
+        } finally {
+            submitting = false;
+            button.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>

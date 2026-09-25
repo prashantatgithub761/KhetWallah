@@ -14,6 +14,10 @@ public class ListingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @Column(name = "photo_file_name", length = 60)
+    private String photoFileName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private AppUser owner;
@@ -108,7 +112,43 @@ public class ListingEntity {
         this.pricePerKg = pricePerKg;
         this.pickupArea = pickupArea;
     }
+    public void reserveStock(BigDecimal quantityKg) {
+        if (status != ListingStatus.ACTIVE) {
+            throw new IllegalStateException("Listing is closed");
+        }
+
+        if (quantityKg == null || quantityKg.signum() <= 0) {
+            throw new IllegalArgumentException(
+                    "Quantity must be positive"
+            );
+        }
+
+        if (availableQuantityKg.compareTo(quantityKg) < 0) {
+            throw new IllegalArgumentException(
+                    "Insufficient available quantity"
+            );
+        }
+
+        availableQuantityKg = availableQuantityKg.subtract(quantityKg);
+    }
     public void close() {
         this.status = ListingStatus.CLOSED;
     }
+    public void restoreStock(BigDecimal quantityKg) {
+        if (quantityKg == null || quantityKg.signum() <= 0) {
+            throw new IllegalArgumentException(
+                    "Restored quantity must be positive"
+            );
+        }
+
+        availableQuantityKg = availableQuantityKg.add(quantityKg);
+    }
+    public String getPhotoFileName() {
+        return photoFileName;
+    }
+
+    public void changePhoto(String photoFileName) {
+        this.photoFileName = photoFileName;
+    }
+
 }

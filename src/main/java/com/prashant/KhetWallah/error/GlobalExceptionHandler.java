@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
-
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -52,6 +52,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(exception.getStatusCode())
                 .body(response);
+    }
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiError> handleLargeUpload(
+            MaxUploadSizeExceededException exception
+    ) {
+        return ResponseEntity.status(413).body(
+                new ApiError(
+                        413,
+                        "The photo must be 5 MB or smaller",
+                        Map.of()
+                )
+        );
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

@@ -155,6 +155,7 @@
         <span class="brand">🌾 KhetWallah</span>
         <div id="account-navigation">
             <a href="/login">Sign in</a>
+            <a href="/register.html">Create account</a>
         </div>
     </div>
 </header>
@@ -194,6 +195,8 @@
 
     <p id="message" role="status">Loading listings…</p>
 
+    <p id="order-message" role="status"></p>
+
     <div id="listings" class="grid" aria-label="Available crop listings"></div>
 
     <nav class="pagination" aria-label="Listing pages">
@@ -203,7 +206,7 @@
         <button id="reload" type="button">Refresh</button>
     </nav>
 </main>
-
+<script src="/listing-photos.js"></script>
 <script>
     const listingsElement = document.getElementById("listings");
     const messageElement = document.getElementById("message");
@@ -280,6 +283,7 @@ const response = await fetch(
             for (const listing of data.content) {
                 const card = document.createElement("article");
                 card.className = "card";
+                renderListingPhoto(card, listing);
 
                 addText(card, "h2", listing.produceName);
                 addText(
@@ -294,9 +298,19 @@ const response = await fetch(
                     "p",
                     `Available: ${listing.availableQuantityKg} kg`
                 );
+
                 addText(card, "p", `Pickup: ${listing.pickupArea}`);
 
-                listingsElement.appendChild(card);
+const orderButton = document.createElement("button");
+orderButton.type = "button";
+orderButton.textContent = listing.availableQuantityKg > 0
+    ? "Order"
+    : "Out of stock";
+orderButton.disabled = listing.availableQuantityKg <= 0;
+orderButton.addEventListener("click", () => placeOrder(listing));
+card.appendChild(orderButton);
+
+listingsElement.appendChild(card);
             }
 
             messageElement.textContent = data.totalElements === 0
@@ -373,6 +387,15 @@ const response = await fetch(
         greeting.textContent = `Hello, ${account.displayName}`;
         navigation.appendChild(greeting);
 
+        const ordersLink = document.createElement("a");
+        ordersLink.href = "/my-orders.html";
+        ordersLink.textContent = "My Orders";
+        navigation.appendChild(ordersLink);
+        const receivedLink = document.createElement("a");
+       receivedLink.href = "/received-orders.html";
+       receivedLink.textContent = "Orders Received";
+       navigation.appendChild(receivedLink);
+
         const createLink = document.createElement("a");
         createLink.href = "/create-listing.html";
         createLink.textContent = "Post a crop";
@@ -393,6 +416,97 @@ const response = await fetch(
 }
 
 loadAccountNavigation();
+
+    let placingOrder = false;
+
+async function placeOrder(listing) {
+    if (placingOrder) return;
+
+    const feedback = document.getElementById("order-message");
+    const entered = prompt(
+        `How many kg of ${listing.produceName}? Available: ${listing.availableQuantityKg} kg`
+    );
+
+    if (entered === null) return;
+
+    const value = entered.trim();
+    const quantity = Number(value);
+
+    if (!/^\d+(\.\d{1,2})?$/.test(value)
+            || quantity <= 0
+            || quantity > Number(listing.availableQuantityKg)) {
+        feedback.textContent =
+            "Enter a positive quantity within the available stock, with at most 2 decimal places.";
+        return;
+    }
+
+    if (!confirm(
+        `Request ${quantity} kg of ${listing.produceName}? ` +
+        `Estimated total: ${currency.format(quantity * Number(listing.pricePerKg))}. ` +
+        "The server uses the current listing price."
+    )) return;
+
+    placingOrder = true;
+    feedback.textContent = "Placing your order…";
+
+    try {
+        const tokenResponse = await fetch("/api/csrf", {
+            redirect: "error"
+        });
+
+        if (!tokenResponse.ok) {
+            throw new Error("Could not prepare the request. Refresh and try again.");
+        }
+
+        const csrf = await tokenResponse.json();
+
+        const response = await fetch("/api/orders", {
+            method: "POST",
+            redirect: "manual",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                [csrf.headerName]: csrf.token
+            },
+            body: JSON.stringify({
+                listingId: listing.id,
+                quantityKg: quantity
+            })
+        });
+
+        if (response.type === "opaqueredirect"
+                || response.status === 401) {
+            feedback.textContent = "Please sign in before ordering.";
+            const link = document.createElement("a");
+            link.href = "/login";
+            link.textContent = " Sign in";
+            feedback.appendChild(link);
+            return;
+        }
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            const details = Object.values(data.fieldErrors || {});
+            throw new Error(
+                details.join(" ") || data.message
+                || `Order rejected (${response.status}). Refresh and try again.`
+            );
+        }
+
+        feedback.textContent =
+            `Order #${data.id} placed: ${data.quantityKg} kg, ` +
+            `total ${currency.format(data.totalAmount)}, status ${data.status}.`;
+
+        await loadListings(currentPage);
+    } catch (error) {
+        feedback.textContent = error instanceof TypeError
+            ? "Connection problem. Check the database before retrying; the order may have been saved."
+            : error.message;
+    } finally {
+        placingOrder = false;
+    }
+}
 </script>
 </body>
 </html>

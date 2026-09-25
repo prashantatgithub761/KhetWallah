@@ -54,7 +54,7 @@ class ListingEditServiceTest {
         ListingEntity listing = existingListing();
         AppUser originalOwner = listing.getOwner();
 
-        when(listingRepository.findById(3L))
+        when(listingRepository.findByIdForUpdate(3L))
                 .thenReturn(Optional.of(listing));
 
         service.updateListing(
@@ -80,7 +80,7 @@ class ListingEditServiceTest {
     void anotherAccountCannotChangeListing() {
         ListingEntity listing = existingListing();
 
-        when(listingRepository.findById(3L))
+        when(listingRepository.findByIdForUpdate(3L))
                 .thenReturn(Optional.of(listing));
 
         ResponseStatusException exception = assertThrows(
@@ -111,7 +111,7 @@ class ListingEditServiceTest {
     void ownerCanCloseListingAndRepeatTheAction() {
         ListingEntity listing = existingListing();
 
-        when(listingRepository.findById(3L))
+        when(listingRepository.findByIdForUpdate(3L))
                 .thenReturn(Optional.of(listing));
 
         service.closeListing(3L, "farmer@example.com");
@@ -129,7 +129,7 @@ class ListingEditServiceTest {
     void anotherAccountCannotCloseListing() {
         ListingEntity listing = existingListing();
 
-        when(listingRepository.findById(3L))
+        when(listingRepository.findByIdForUpdate(3L))
                 .thenReturn(Optional.of(listing));
 
         ResponseStatusException exception = assertThrows(
@@ -152,7 +152,7 @@ class ListingEditServiceTest {
         ListingEntity listing = existingListing();
         listing.close();
 
-        when(listingRepository.findById(3L))
+        when(listingRepository.findByIdForUpdate(3L))
                 .thenReturn(Optional.of(listing));
 
         ResponseStatusException exception = assertThrows(

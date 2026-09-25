@@ -50,8 +50,10 @@ public class SecurityConfig {
                                 HttpMethod.GET,
                                 "/",
                                 "/index.html",
+                                "/register.html",
                                 "/api/status",
                                 "/api/csrf",
+                                "/listing-photos.js",
                                 "/api/listings",
                                 "/api/listings/**"
                         ).permitAll()

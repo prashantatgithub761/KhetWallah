@@ -9,7 +9,7 @@ public class ProduceListing {
     private final BigDecimal pricePerKg;
     private final String pickupArea;
     private final ListingStatus status;
-
+    private String photoUrl;
     public ProduceListing(
             Long id,
             String produceName,
@@ -53,6 +53,13 @@ public class ProduceListing {
     }
     public ListingStatus getStatus() {
         return status;
+    }
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
 

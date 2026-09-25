@@ -92,13 +92,21 @@
         <input id="pickup-area" required maxlength="150"
                placeholder="For example, Meerut">
 
+        <label for="crop-photo">Crop photo — optional</label>
+        <input
+                id="crop-photo"
+                type="file"
+                accept="image/jpeg,image/png"
+        >
+        <p>JPEG or PNG, up to 5 MB. Maximum 8 megapixels.</p>
+
         <button id="submit-button" type="submit">Publish listing</button>
     </form>
 
     <p id="message" role="status"></p>
     <a id="login-link" href="/login" hidden>Sign in again</a>
 </main>
-
+<script src="/listing-photos.js"></script>
 <script>
     const form = document.getElementById("listing-form");
     const submitButton = document.getElementById("submit-button");
@@ -130,6 +138,9 @@
         message.textContent = "Publishing your listing…";
 
         try {
+            const selectedPhoto = document.getElementById("crop-photo").files[0];
+            validateListingPhoto(selectedPhoto);
+
             // Obtain a token belonging to this browser's session.
             const csrfResponse = await fetch("/api/csrf", {
                 headers: { "Accept": "application/json" },
@@ -182,9 +193,27 @@
                 );
             }
 
-            message.textContent =
-            `Your ${data.produceName} listing has been published successfully!`;
+            form.reset();
 
+if (selectedPhoto) {
+    message.textContent =
+        `Listing #${data.id} published. Uploading its photo…`;
+
+    try {
+        await uploadListingPhoto(data.id, selectedPhoto);
+
+        message.textContent =
+            `Your ${data.produceName} listing and photo are published!`;
+    } catch (photoError) {
+        message.textContent =
+            `Listing #${data.id} was published, but the photo upload failed. ` +
+            `Open My Listings to retry the photo upload. ` +
+            photoError.message;
+    }
+} else {
+    message.textContent =
+        `Your ${data.produceName} listing has been published successfully!`;
+}
             form.reset();
         } catch (error) {
             message.textContent =

@@ -92,7 +92,7 @@ public class ListingService {
     }
 
     private ProduceListing toResponse(ListingEntity entity) {
-        return new ProduceListing(
+        ProduceListing response = new ProduceListing(
                 entity.getId(),
                 entity.getProduceName(),
                 entity.getFarmerName(),
@@ -101,6 +101,14 @@ public class ListingService {
                 entity.getPickupArea(),
                 entity.getStatus()
         );
+
+        if (entity.getPhotoFileName() != null) {
+            response.setPhotoUrl(
+                    "/api/listings/" + entity.getId() + "/photo"
+            );
+        }
+
+        return response;
     }
     public ListingPageResponse getMyListings(
             String authenticatedEmail,
@@ -136,7 +144,7 @@ public class ListingService {
             UpdateListingRequest request,
             String authenticatedEmail
     ) {
-        ListingEntity listing = listingRepository.findById(listingId)
+        ListingEntity listing = listingRepository.findByIdForUpdate(listingId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Listing not found"
@@ -171,7 +179,7 @@ public class ListingService {
             Long listingId,
             String authenticatedEmail
     ) {
-        ListingEntity listing = listingRepository.findById(listingId)
+        ListingEntity listing = listingRepository.findByIdForUpdate(listingId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Listing not found"
