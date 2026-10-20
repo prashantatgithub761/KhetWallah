@@ -50,12 +50,24 @@
         .pickup-details { white-space: pre-wrap; overflow-wrap: anywhere; }
         .pickup-note { font-size: 0.9em; }
     </style>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
+    <script src="/order-messages.js?v=20261020-marketplace" defer></script>
 </head>
 <body data-orders-view="farmer">
-<main>
-    <a href="/">← Browse crops</a>
-    <h1>Order Received</h1>
-    <p>Orders buyers placed for your crops.</p>
+<a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><div class="header-content"><a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a><nav class="page-navigation" aria-label="Main navigation"><a href="/notifications.html">Notifications</a><a href="/account.html">My account</a><a href="/">Browse crops</a><a href="/create-listing.html">Sell produce</a><a href="/my-listings.html">My listings</a><a href="/my-orders.html">My orders</a><a href="/received-orders.html" aria-current="page">Received</a></nav></div></header>
+<main id="main-content">
+    <div class="page-heading"><div class="page-heading-copy">
+    <p class="workspace-kicker">Your harvest, their next meal</p>
+    <h1>Orders received</h1>
+    <p class="orders-intro page-intro">Review buyer requests, arrange pickups, and follow each order through collection.</p>
+    </div><a class="button-link secondary" href="/">Browse crops <span aria-hidden="true">↗</span></a></div>
 
     <p id="message" role="status">Loading orders…</p>
     <a id="login-link" href="/login" hidden>Sign in again</a>
@@ -67,8 +79,16 @@
         <button id="next" disabled>Next</button>
         <button id="refresh">Refresh</button>
     </nav>
-</main>
+</main><footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
 
-<script src="/orders.js" defer></script>
+<dialog id="order-action-dialog" aria-labelledby="order-action-title" aria-describedby="order-action-description">
+    <div class="dialog-heading"><p id="order-action-reference" class="eyebrow"></p><button id="close-order-action" type="button" class="icon-button" aria-label="Close confirmation">×</button></div>
+    <h2 id="order-action-title"></h2><p id="order-action-description"></p>
+    <div class="dialog-actions"><button id="confirm-order-action" type="button"></button><button id="cancel-order-action" type="button" class="secondary" autofocus>Keep current status</button></div>
+</dialog>
+<script src="/listing-photos.js?v=2026-10-19-realworld" defer></script>
+<script src="/pickup-ui.js?v=2026-10-19-realworld" defer></script>
+<script src="/listing-reviews.js?v=2026-10-19-realworld" defer></script>
+<script src="/orders.js?v=2026-10-19-realworld" defer></script>
 </body>
 </html>

@@ -38,6 +38,11 @@ public class OrderController {
                 size
         );
     }
+    @GetMapping("/api/me/orders/{id}")
+    public OrderResponse getOrder(@PathVariable("id") Long id, Principal principal) {
+        return orderService.getOrderForParticipant(id, principal.getName());
+    }
+
     @PostMapping("/api/orders/{id}/accept")
     public ResponseEntity<Void> acceptOrder(
             @PathVariable("id") Long id,
@@ -112,7 +117,7 @@ public class OrderController {
             @PathVariable("id") Long id,
             Principal principal
     ) {
-        orderService.completeOrder(id, principal.getName());
-        return ResponseEntity.noContent().build();
+        throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Please use a buyer pickup code and ask the farmer to confirm the handover");
     }
 }

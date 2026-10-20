@@ -1,0 +1,20 @@
+# Only the Maven project definition and source are needed by the build.
+# Keep Git history, IntelliJ credentials, local uploads and database exports out.
+**
+!Dockerfile
+!.dockerignore
+!pom.xml
+!src/
+!src/**
+
+# Also exclude private/configuration artifacts if saved inside the source tree.
+**/.env
+**/.env.*
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.sql
+**/application-local.*
+**/application-secrets.*
+**/.DS_Store

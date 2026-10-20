@@ -3,6 +3,7 @@ package com.prashant.KhetWallah.order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public interface OrderRepository
         extends JpaRepository<OrderEntity, Long> {
 
+    @EntityGraph(attributePaths = {"listing", "buyer"})
     Page<OrderEntity> findByBuyer_EmailOrderByIdDesc(
             String email,
             Pageable pageable
@@ -18,6 +20,7 @@ public interface OrderRepository
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select o from OrderEntity o where o.id = :id")
     Optional<OrderEntity> findByIdForUpdate(@Param("id") Long id);
+    @EntityGraph(attributePaths = {"listing", "buyer"})
     Page<OrderEntity> findByListing_Owner_EmailOrderByIdDesc(
             String email,
             Pageable pageable

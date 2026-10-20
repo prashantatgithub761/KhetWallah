@@ -21,8 +21,10 @@ class OrderDecisionServiceTest {
     private final ListingRepository listings = mock(ListingRepository.class);
     private final AppUserRepository users = mock(AppUserRepository.class);
 
+    private final OrderEmailNotifications emails = mock(OrderEmailNotifications.class);
+
     private final OrderService service =
-            new OrderService(orders, listings, users);
+            new OrderService(orders, listings, users, emails);
 
     private ListingEntity listing;
     private OrderEntity order;
@@ -63,6 +65,7 @@ class OrderDecisionServiceTest {
         service.acceptOrder(1L, "farmer@example.com");
         service.acceptOrder(1L, "farmer@example.com");
 
+        verify(emails, times(1)).queue(order, OrderEmailNotifications.Event.ACCEPTED);
         assertEquals(OrderStatus.ACCEPTED, order.getStatus());
         assertEquals(
                 new BigDecimal("40.00"),
@@ -75,6 +78,7 @@ class OrderDecisionServiceTest {
         service.rejectOrder(1L, "farmer@example.com");
         service.rejectOrder(1L, "farmer@example.com");
 
+        verify(emails, times(1)).queue(order, OrderEmailNotifications.Event.REJECTED);
         assertEquals(OrderStatus.REJECTED, order.getStatus());
         assertEquals(
                 new BigDecimal("50.00"),
@@ -149,6 +153,7 @@ class OrderDecisionServiceTest {
         service.completeOrder(1L, "buyer@example.com");
         service.completeOrder(1L, "buyer@example.com");
 
+        verify(emails, times(1)).queue(order, OrderEmailNotifications.Event.COMPLETED);
         assertEquals(OrderStatus.COMPLETED, order.getStatus());
         assertEquals(
                 new BigDecimal("40.00"),

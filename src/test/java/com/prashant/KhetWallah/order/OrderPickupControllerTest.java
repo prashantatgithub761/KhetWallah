@@ -32,6 +32,13 @@ class OrderPickupControllerTest {
         {"pickupAt":"2099-01-01T10:00:00Z","pickupInstructions":"Village market gate"}
         """;
 
+    @org.junit.jupiter.api.BeforeEach
+    void setUpActiveAccounts() {
+        org.mockito.Mockito.when(userRepository.findByEmail(org.mockito.ArgumentMatchers.anyString()))
+                .thenAnswer(invocation -> java.util.Optional.of(
+                        new com.prashant.KhetWallah.user.AppUser("Test user", invocation.getArgument(0), "test-hash")));
+    }
+
     @Test
     void schedulesUsingAuthenticatedFarmer() throws Exception {
         mockMvc.perform(post("/api/orders/1/pickup").with(csrf())
@@ -98,9 +105,9 @@ class OrderPickupControllerTest {
 
     @Test
     @WithMockUser(username = "buyer@example.com", roles = "USER")
-    void completionUsesAuthenticatedBuyer() throws Exception {
+    void oldCompletionCannotBypassPickupCode() throws Exception {
         mockMvc.perform(post("/api/orders/1/complete").with(csrf()))
-                .andExpect(status().isNoContent());
-        verify(orderService).completeOrder(1L, "buyer@example.com");
+                .andExpect(status().isConflict());
+        verifyNoInteractions(orderService);
     }
 }

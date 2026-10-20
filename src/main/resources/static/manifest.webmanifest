@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "KhetWallah \u2014 Farmers and Buyers",
+  "short_name": "KhetWallah",
+  "description": "Discover local produce, connect with farmers and arrange collection.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8f7f2",
+  "theme_color": "#213f32",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

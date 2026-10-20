@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="View crop availability, farmer details and pickup area on KhetWallah.">
+    <title>Crop details | KhetWallah</title>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/listing-photos.js?v=2026-10-19-realworld" defer></script>
+    <script src="/listing-reviews.js?v=2026-10-19-realworld" defer></script>
+    <script src="/saved-controls.js" defer></script>
+    <script src="/listing-page.js?v=2026-10-19-realworld" defer></script>
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
+</head>
+<body class="listing-page">
+<a class="skip-link" href="#main-content">Skip to crop details</a>
+<header class="app-header"><div class="header-content"><a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a><nav class="page-navigation" aria-label="Main navigation"><a href="/notifications.html">Notifications</a><a href="/">Browse crops</a><a href="/create-listing.html">Sell produce</a><a href="/account.html">My account</a><a href="/my-orders.html">My orders</a></nav></div></header>
+<main id="main-content">
+    <div class="page-heading"><div><p class="workspace-kicker">From the farmer's stand</p><h1 id="listing-title">Crop details</h1></div><a class="button-link secondary" href="/">← Browse crops</a></div>
+    <p id="listing-message" class="form-feedback" role="status">Loading crop details…</p>
+    <button id="retry-listing" class="secondary" type="button" hidden>Try again</button>
+    <div id="listing-content" class="listing-detail-page" hidden>
+        <div id="listing-photo" class="listing-page-photo"></div>
+        <section class="listing-purchase-panel" aria-label="Crop availability and order request">
+            <span id="listing-stock" class="stock-badge"></span>
+            <p class="listing-page-price"><strong id="listing-price"></strong><span> / kg</span></p>
+            <div id="listing-farmer-actions" class="listing-farmer-actions"></div><dl id="listing-facts" class="crop-facts"></dl>
+            <form id="listing-order-form">
+                <div class="field-group"><label for="listing-quantity" data-i18n="Quantity to request (kg)">Quantity to request (kg)</label><input id="listing-quantity" type="number" min="0.01" step="0.01" inputmode="decimal" required aria-describedby="quantity-hint"><small id="quantity-hint" class="form-help"></small></div>
+                <div class="order-estimate"><span data-i18n="Estimated total">Estimated total</span><strong id="listing-total">₹0.00</strong></div>
+                <p id="harvest-disclaimer" class="form-help" data-i18n="Harvest dates are reported by the farmer and are not independently verified." hidden>Harvest dates are reported by the farmer and are not independently verified.</p>
+                <p class="form-help" data-i18n="This sends a request to the farmer. Price and stock are confirmed when your request is placed. No online payment is taken.">This sends a request to the farmer. Price and stock are confirmed when your request is placed. No online payment is taken.</p>
+                <button id="request-listing" class="form-submit" type="submit">Request produce →</button>
+            </form>
+            <p id="listing-order-message" role="status" class="form-feedback" tabindex="-1"></p>
+            <a id="listing-login" class="button-link" data-i18n="Sign in to request produce →" href="/login" hidden>Sign in to request produce →</a>
+            <div class="pickup-explainer"><strong data-i18n="Plan your pickup">Plan your pickup</strong><p data-i18n="After accepting your request, the farmer adds a pickup time and meeting instructions. Check My orders before travelling.">After accepting your request, the farmer adds a pickup time and meeting instructions. Check My orders before travelling.</p></div>
+            <button id="copy-listing" class="secondary" type="button" data-i18n="Copy crop link">Copy crop link</button>
+            <p id="listing-share-message" role="status" class="form-help"></p>
+            <div id="listing-share-fallback" hidden><label for="listing-share-url" data-i18n="Copy this crop link">Copy this crop link</label><input id="listing-share-url" type="url" readonly></div>
+        </section>
+    </div>
+    <section id="crop-reviews" class="dashboard-panel" aria-label="Crop reviews" hidden></section>
+</main>
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
+</body></html>

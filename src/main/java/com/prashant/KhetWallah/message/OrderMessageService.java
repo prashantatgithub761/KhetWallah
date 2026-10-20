@@ -1,0 +1,42 @@
+package com.prashant.KhetWallah.message;
+
+import com.prashant.KhetWallah.admin.*;
+import com.prashant.KhetWallah.order.*;
+import com.prashant.KhetWallah.user.*;
+import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import java.time.*;
+import java.util.*;
+
+@Service
+public class OrderMessageService {
+ private final OrderMessageRepository messages; private final MessageReportRepository reports; private final OrderRepository orders; private final AppUserRepository users; private final AdminActionRepository actions; private final Clock clock;
+ @org.springframework.beans.factory.annotation.Autowired
+ public OrderMessageService(OrderMessageRepository messages,MessageReportRepository reports,OrderRepository orders,AppUserRepository users,AdminActionRepository actions){this(messages,reports,orders,users,actions,Clock.systemUTC());}
+ OrderMessageService(OrderMessageRepository messages,MessageReportRepository reports,OrderRepository orders,AppUserRepository users,AdminActionRepository actions,Clock clock){this.messages=messages;this.reports=reports;this.orders=orders;this.users=users;this.actions=actions;this.clock=clock;}
+ @Transactional(readOnly=true) public MessagePage list(Long orderId,String email,int page,int size){AppUser user=current(email);participant(orderId,user);Page<OrderMessage> result=messages.findByOrder_IdOrderByIdDesc(orderId,pageable(page,size));return new MessagePage(result.map(m->view(m,user)).getContent(),result.getNumber(),result.getTotalPages(),result.getTotalElements(),messages.countByOrder_IdAndRecipient_IdAndReadAtIsNull(orderId,user.getId()));}
+ // Locking reads are deliberate: MySQL repeatable-read snapshots taken before a waited user lock
+ // must not let concurrent requests see stale rate counts. The sender lock serializes all orders.
+ @Transactional public MessageView send(Long orderId,String body,String email){String clean=checked(body,2000,"Write a message containing 1–2000 characters");AppUser user=lockedCurrent(email);OrderEntity order=participant(orderId,user);Instant now=clock.instant();List<OrderMessage> recent=messages.recentSentForUpdate(user.getId(),now.minusSeconds(3600),PageRequest.of(0,120));if(recent.size()>=120 || recent.stream().filter(m->m.getCreatedAt().isAfter(now.minusSeconds(60))).count()>=10)throw error(HttpStatus.TOO_MANY_REQUESTS,"Message limit reached. Please wait before sending again.");AppUser recipient=Objects.equals(order.getBuyer().getId(),user.getId())?order.getListing().getOwner():order.getBuyer();if(recipient==null||recipient.isSuspended())throw error(HttpStatus.CONFLICT,"The other participant is currently unavailable");return view(messages.saveAndFlush(new OrderMessage(order,user,recipient,clean,now)),user);}
+ @Transactional public int markRead(Long orderId,Long lastSeenId,String email){AppUser user=current(email);participant(orderId,user);OrderMessage last=messages.findById(lastSeenId==null?0L:lastSeenId).filter(m->Objects.equals(m.getOrder().getId(),orderId)).orElseThrow(()->error(HttpStatus.NOT_FOUND,"Message not found"));return messages.markRead(orderId,user.getId(),last.getId(),clock.instant());}
+ @Transactional(readOnly=true) public long unread(String email){return messages.countByRecipient_IdAndReadAtIsNull(current(email).getId());}
+ @Transactional(readOnly=true) public Page<ConversationView> conversations(String email,int page,int size){AppUser user=current(email);return messages.conversations(user.getId(),PageRequest.of(pageable(page,size).getPageNumber(),size,Sort.by("id").descending())).map(m->{OrderEntity order=m.getOrder();boolean farmer=order.getListing().getOwner()!=null&&Objects.equals(order.getListing().getOwner().getId(),user.getId());AppUser other=farmer?order.getBuyer():order.getListing().getOwner();String target=(farmer?"/received-orders.html":"/my-orders.html")+"?orderId="+order.getId()+"#order-"+order.getId();return new ConversationView(order.getId(),order.getListing().getProduceName(),other==null?"Former farmer":other.getDisplayName(),farmer,m.isHidden()?null:m.getBody(),m.isHidden(),m.getCreatedAt(),messages.countByOrder_IdAndRecipient_IdAndReadAtIsNull(order.getId(),user.getId()),target);});}
+ @Transactional public void report(Long messageId,String reason,String email){String clean=checked(reason,500,"Give a report reason containing 1–500 characters");AppUser user=lockedCurrent(email);OrderMessage message=messages.findById(messageId).orElseThrow(()->error(HttpStatus.NOT_FOUND,"Message not found"));participant(message.getOrder().getId(),user);if(Objects.equals(message.getSender().getId(),user.getId()))throw error(HttpStatus.BAD_REQUEST,"You can report a message received from the other participant");if(reports.existingForUpdate(messageId,user.getId()).isPresent())return;if(reports.recentReportsForUpdate(user.getId(),clock.instant().minusSeconds(3600),PageRequest.of(0,20)).size()>=20)throw error(HttpStatus.TOO_MANY_REQUESTS,"Report limit reached. Please wait before reporting again.");reports.save(new MessageReport(message,user,clean,clock.instant()));}
+ @Transactional(readOnly=true) public Page<ReportView> reported(String email,int page,int size){admin(email);return reports.findAllByOrderByIdDesc(pageable(page,size)).map(r->{OrderMessage m=r.getMessage();return new ReportView(r.getId(),m.getId(),m.getOrder().getId(),m.getSender().getDisplayName(),m.getBody(),m.isHidden(),r.getReporter().getDisplayName(),r.getReason(),r.getCreatedAt());});}
+ @Transactional public void moderate(Long id,boolean hidden,String reason,String email){admin(email);String clean=checked(reason,500,"Give a moderation reason containing 1–500 characters");OrderMessage message=messages.findByIdForUpdate(id).orElseThrow(()->error(HttpStatus.NOT_FOUND,"Message not found"));if(message.isHidden()==hidden)throw error(HttpStatus.CONFLICT,hidden?"Message is already hidden":"Message is already visible");message.setHidden(hidden);actions.save(new AdminAction(email,hidden?"HIDE_MESSAGE":"RESTORE_MESSAGE","MESSAGE",id,clean));}
+ private AppUser current(String email){return users.findByEmail(email).filter(u->!u.isSuspended()).orElseThrow(()->error(HttpStatus.UNAUTHORIZED,"Sign in to your account"));}
+ private AppUser lockedCurrent(String email){AppUser user=current(email);return users.findByIdForUpdate(user.getId()).filter(u->!u.isSuspended()).orElseThrow(()->error(HttpStatus.UNAUTHORIZED,"Sign in to your account"));}
+ private OrderEntity participant(Long id,AppUser user){return orders.findById(id).filter(o->Objects.equals(o.getBuyer().getId(),user.getId())||(o.getListing().getOwner()!=null&&Objects.equals(o.getListing().getOwner().getId(),user.getId()))).orElseThrow(()->error(HttpStatus.NOT_FOUND,"Order not found"));}
+ private void admin(String email){AppUser user=current(email);if(user.getRole()!=UserRole.ADMIN)throw error(HttpStatus.FORBIDDEN,"Administrator access required");}
+ private MessageView view(OrderMessage message,AppUser user){return new MessageView(message.getId(),message.getOrder().getId(),message.getSender().getDisplayName(),Objects.equals(message.getSender().getId(),user.getId()),message.isHidden()?null:message.getBody(),message.isHidden(),message.getCreatedAt(),message.getReadAt());}
+ private static String checked(String value,int max,String failure){if(value==null||value.isBlank()||value.strip().length()>max)throw error(HttpStatus.BAD_REQUEST,failure);return value.strip();}
+ private static PageRequest pageable(int page,int size){if(page<0||size<1||size>50)throw error(HttpStatus.BAD_REQUEST,"Use page >= 0 and size 1–50");return PageRequest.of(page,size);}
+ private static ResponseStatusException error(HttpStatus status,String text){return new ResponseStatusException(status,text);}
+ public record MessageView(Long id,Long orderId,String senderName,boolean mine,String body,boolean hidden,Instant createdAt,Instant readAt){}
+ public record MessagePage(List<MessageView> content,int page,int totalPages,long totalElements,long unreadCount){}
+ public record ConversationView(Long orderId,String produceName,String otherName,boolean farmerView,String lastMessage,boolean hidden,Instant updatedAt,long unreadCount,String targetUrl){}
+ public record ReportView(Long id,Long messageId,Long orderId,String senderName,String body,boolean hidden,String reporterName,String reason,Instant createdAt){}
+}

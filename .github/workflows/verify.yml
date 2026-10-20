@@ -1,0 +1,24 @@
+name: Verify KhetWallah
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Unit and controller checks, then package
+        run: sh ./mvnw --batch-mode '-Dtest=*Test,!*IntegrationTest' verify
+      - name: Check offline cache privacy
+        run: node docs/check-pwa.mjs

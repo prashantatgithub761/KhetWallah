@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in | KhetWallah</title>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/login.js?v=2026-10-19-realworld" defer></script>
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
+</head>
+<body class="form-page login-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="app-header">
+    <div class="header-content">
+        <a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a>
+        <nav class="page-navigation" aria-label="Main navigation"><a href="/">Browse crops</a><a href="/register.html">Create account <span aria-hidden="true">→</span></a></nav>
+    </div>
+</header>
+<main id="main-content" class="form-workspace">
+    <section class="form-surface" aria-labelledby="login-heading">
+        <p class="form-kicker">Welcome back</p>
+        <h1 id="login-heading">Your next connection starts here.</h1>
+        <p class="form-help">Sign in to request produce, manage your crops, and arrange pickups.</p>
+        <p id="login-feedback" class="form-feedback" role="status" aria-live="polite" hidden></p>
+        <form id="login-form" action="/login" method="post">
+            <div class="field-group">
+                <label for="login-email">Email address</label>
+                <input id="login-email" name="username" type="email" required maxlength="254" autocomplete="username" placeholder="you@example.com" spellcheck="false" autocapitalize="none">
+            </div>
+            <div class="field-group">
+                <label for="login-password">Password</label>
+                <div class="password-control">
+                    <input id="login-password" name="password" type="password" required maxlength="128" autocomplete="current-password">
+                    <button id="toggle-password" class="secondary password-toggle" type="button" aria-controls="login-password" aria-pressed="false">Show password</button>
+                </div>
+            </div>
+            <a class="recovery-link" href="/recovery.html">Forgot password?</a>
+            <input id="login-return" name="returnTo" type="hidden">
+            <input id="login-csrf" name="_csrf" type="hidden">
+            <button id="login-submit" class="form-submit" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <p id="login-message" class="form-feedback" role="status" aria-live="polite"></p>
+        <noscript><p class="form-help">Please enable JavaScript to prepare the security token for signing in.</p></noscript>
+        <p class="form-help">New to KhetWallah? <a href="/register.html">Create your account <span aria-hidden="true">→</span></a></p>
+    </section>
+    <aside class="form-story" aria-labelledby="login-story-title">
+        <p class="form-kicker">Good food. Direct connections.</p>
+        <h2 id="login-story-title">Back to the people behind your produce.</h2>
+        <p>Your account brings your buying and selling activity together, from the first request to the final pickup.</p>
+        <ol class="form-story-list">
+            <li><strong>Discover what is growing.</strong><span>Find available crops and compare prices and pickup areas.</span></li>
+            <li><strong>Keep every request in view.</strong><span>Track your orders or respond to buyers interested in your produce.</span></li>
+            <li><strong>Pick up with a plan.</strong><span>Check the farmer’s pickup time and instructions before you travel.</span></li>
+        </ol>
+        <a href="/">Keep browsing <span aria-hidden="true">→</span></a>
+    </aside>
+</main>
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
+</body>
+</html>

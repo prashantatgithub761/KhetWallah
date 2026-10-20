@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reset password | KhetWallah</title>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/recovery.js?v=2026-10-19-community" defer></script>
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
+</head>
+<body class="form-page login-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="app-header"><div class="header-content">
+    <a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a>
+    <nav class="page-navigation" aria-label="Main navigation"><a href="/">Browse crops</a><a href="/login">Sign in <span aria-hidden="true">→</span></a></nav>
+</div></header>
+<main id="main-content" class="form-workspace">
+    <section class="form-surface" aria-labelledby="recovery-heading">
+        <p class="form-kicker">Let’s get you back in</p>
+        <h1 id="recovery-heading">Reset your password.</h1>
+        <p class="form-help">Request a code using the email address you registered with. Your password only changes after you confirm the code.</p>
+        <form id="recovery-start-form">
+            <div class="field-group">
+                <label for="recovery-email">Registered email address</label>
+                <input id="recovery-email" name="email" type="email" required maxlength="254" autocomplete="username" placeholder="you@example.com" spellcheck="false" autocapitalize="none" aria-describedby="recovery-email-error">
+                <span id="recovery-email-error" class="field-error"></span>
+            </div>
+            <button id="recovery-start" class="form-submit" type="submit">Request recovery code <span aria-hidden="true">→</span></button>
+        </form>
+        <p id="recovery-message" class="form-feedback" role="status" aria-live="polite" tabindex="-1"></p>
+        <section id="recovery-code-section" hidden aria-labelledby="code-heading">
+            <h2 id="code-heading" tabindex="-1">Enter your recovery code</h2>
+            <p id="recovery-target" class="form-help"></p>
+            <form id="recovery-finish-form">
+                <div class="field-group">
+                    <label for="recovery-code">Six-digit email code</label>
+                    <input id="recovery-code" name="code" inputmode="numeric" autocomplete="one-time-code" required pattern="[0-9]{6}" minlength="6" maxlength="6" aria-describedby="recovery-code-help recovery-code-error">
+                    <small id="recovery-code-help" class="form-help">The latest code expires after 10 minutes. Do not share it.</small>
+                    <span id="recovery-code-error" class="field-error"></span>
+                </div>
+                <div class="field-group">
+                    <label for="recovery-password">New password</label>
+                    <div class="password-control">
+                        <input id="recovery-password" name="newPassword" type="password" autocomplete="new-password" required minlength="15" maxlength="128" aria-describedby="recovery-password-help recovery-password-error">
+                        <button id="recovery-toggle" class="secondary password-toggle" type="button" aria-controls="recovery-password recovery-confirm" aria-pressed="false">Show passwords</button>
+                    </div>
+                    <small id="recovery-password-help" class="form-help">Use a unique password or passphrase with 15 to 128 characters.</small>
+                    <span id="recovery-password-error" class="field-error"></span>
+                </div>
+                <div class="field-group">
+                    <label for="recovery-confirm">Confirm new password</label>
+                    <input id="recovery-confirm" name="confirmPassword" type="password" autocomplete="new-password" required minlength="15" maxlength="128">
+                </div>
+                <button id="recovery-finish" class="form-submit" type="submit">Save new password <span aria-hidden="true">→</span></button>
+            </form>
+            <div class="button-row">
+                <button id="recovery-resend" class="secondary" type="button">Request another code</button>
+                <button id="recovery-change-email" class="secondary" type="button">Use another email</button>
+            </div>
+            <p class="form-help">If the code does not arrive, check spam and wait a minute before requesting another. Suspended accounts need help from the site owner. Administrator passwords are managed through the owner’s private deployment configuration.</p>
+        </section>
+        <p><a id="recovery-sign-in" href="/login">Back to sign in <span aria-hidden="true">→</span></a></p>
+        <noscript><p class="form-help">Enable JavaScript to securely request and confirm a recovery code.</p></noscript>
+    </section>
+    <aside class="form-story" aria-labelledby="recovery-story-heading">
+        <p class="form-kicker">Your account, protected</p>
+        <h2 id="recovery-story-heading">A fresh start for your next connection.</h2>
+        <p>Your listings and orders stay with your account when you reset your password.</p>
+        <ol class="form-story-list">
+            <li><strong>Confirm your email.</strong><span>Use the most recent six-digit code sent to your registered inbox.</span></li>
+            <li><strong>Choose a new password.</strong><span>A longer, unique passphrase is easier to remember and harder to guess.</span></li>
+            <li><strong>Sign in again.</strong><span>Resetting the password ends previous account sessions, including sessions on other devices.</span></li>
+        </ol>
+        <a href="/">Keep browsing <span aria-hidden="true">→</span></a>
+    </aside>
+</main>
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
+</body>
+</html>

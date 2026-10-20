@@ -5,167 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KhetWallah | Browse crops</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
 
-        body {
-            margin: 0;
-            background: #f5f7f2;
-            color: #203326;
-            font-family: Arial, sans-serif;
-            line-height: 1.5;
-        }
-
-        header {
-            background: #174c35;
-            color: white;
-            padding: 20px;
-        }
-
-        .header-content {
-            max-width: 1000px;
-            margin: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .brand {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        header a {
-            color: white;
-        }
-
-        main {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        h1 {
-            margin-bottom: 8px;
-        }
-
-        .intro {
-            color: #526256;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin: 24px 0;
-        }
-
-        .card {
-            padding: 24px;
-            background: white;
-            border: 1px solid #dbe4d9;
-            border-radius: 12px;
-        }
-
-        .card h2 {
-            margin-top: 0;
-        }
-
-        .price {
-            color: #174c35;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .pagination {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        button {
-            padding: 10px 18px;
-            border: 0;
-            border-radius: 8px;
-            background: #174c35;
-            color: white;
-            font: inherit;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            opacity: 0.45;
-            cursor: default;
-        }
-
-        a:focus-visible,
-        button:focus-visible {
-            outline: 3px solid #d49b24;
-            outline-offset: 4px;
-        }
-    .search-controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: 16px;
-    margin: 24px 0;
-    padding: 20px;
-    border: 1px solid #dbe4d9;
-    border-radius: 12px;
-    background: white;
-}
-
-.search-controls label {
-    display: flex;
-    flex: 1 1 200px;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.search-controls input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #879b8b;
-    border-radius: 6px;
-    font: inherit;
-}
-
-.search-controls input:focus-visible {
-    outline: 3px solid #d49b24;
-    outline-offset: 2px;
-}
-#account-navigation {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
-}
-
-    </style>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
 </head>
 
-<body>
+<body class="marketplace">
+<a class="skip-link" href="#main-content">Skip to crops</a>
 <header>
     <div class="header-content">
-        <span class="brand">🌾 KhetWallah</span>
-        <div id="account-navigation">
+        <a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a>
+        <nav id="account-navigation" aria-label="Account navigation">
+            <a href="#marketplace-title">Browse crops</a>
+            <a href="/create-listing.html">Sell produce</a>
             <a href="/login">Sign in</a>
             <a href="/register.html">Create account</a>
-        </div>
+        </nav>
     </div>
 </header>
 
-<main>
-    <h1>Fresh produce from local farmers</h1>
-    <p class="intro">
-        Explore available crops, prices, and pickup locations.
-    </p>
+<main id="main-content">
+    <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+            <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> The farmer-to-buyer marketplace</p>
+            <h1 id="hero-title">From the khet.<br>To your <em>kitchen.</em></h1>
+            <p class="intro">Discover produce from farmers, compare prices, and arrange your pickup. A simpler way to buy and sell.</p>
+            <div class="hero-actions"><a class="button-link" href="#search-form">Explore crops <span aria-hidden="true">↓</span></a><a class="hero-link" href="/create-listing.html">Sell your harvest ↗</a></div><p class="hero-note">Browse the crop. Agree on pickup. Meet your farmer.</p>
+        </div>
+        <div class="field-art" aria-hidden="true">
+            <svg class="farm-illustration" viewBox="0 0 540 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="farm-sky" x2="0" y2="1"><stop stop-color="#f3e8c9"/><stop offset="1" stop-color="#e1e5c6"/></linearGradient>
+                    <pattern id="crop-rows" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(-26)"><path d="M0 0V30" stroke="#d7dba0" stroke-width="3" opacity=".4"/></pattern>
+                    <pattern id="grain-rows" width="23" height="23" patternUnits="userSpaceOnUse" patternTransform="rotate(28)"><path d="M0 0V23" stroke="#ecce83" stroke-width="3" opacity=".5"/></pattern>
+                </defs>
+                <path fill="url(#farm-sky)" d="M0 0h540v460H0z"/>
+                <circle cx="401" cy="100" r="62" fill="#eac06f"/><circle cx="401" cy="100" r="77" fill="none" stroke="#eac06f" opacity=".3"/>
+                <path d="M0 190Q135 90 277 186T540 151V460H0" fill="#b0be8a"/>
+                <path d="M0 258Q153 137 324 242T540 220V460H0" fill="#839d68"/>
+                <path d="M0 335Q145 233 310 297T540 279V460H0" fill="#c3b16b"/>
+                <path d="M0 335Q145 233 310 297T540 279V460H0" fill="url(#grain-rows)"/>
+                <path d="M-30 232Q167 294 285 371T570 420V460H-30" fill="#3f694c"/>
+                <path d="M-30 232Q167 294 285 371T570 420V460H-30" fill="url(#crop-rows)"/>
+                <path d="M312 211Q215 264 315 307T409 462" fill="none" stroke="#f3ddb0" stroke-width="17"/>
+                <path d="M318 211Q221 263 321 305T415 462" fill="none" stroke="#d7c38e" stroke-width="2"/>
+                <g transform="translate(259 166)"><path d="M0 24L37 0 74 24" fill="#ad6648"/><path d="M7 24h60v46H7" fill="#f4e1b7"/><path d="M29 40h18v30H29" fill="#385a43"/><path d="M12 35h11v13H12m30-13h11v13H42" fill="#68816b"/></g>
+                <g fill="#426848"><path d="M104 172q-23-40 0-65q25 24 0 65Z"/><path d="M137 182q-28-45 0-75q29 30 0 75Z"/><path d="M468 222q-29-50 0-80q30 31 0 80Z"/></g>
+                <g stroke="#566449" stroke-width="3"><path d="M104 165v29m33-20v28m331 10v25"/></g>
+                <g fill="none" stroke="#667a55" stroke-width="2" stroke-linecap="round"><path d="M194 99q8-8 16 0q8-8 16 0m-65 28q6-6 12 0q6-6 12 0"/></g>
+            </svg>
+            <span class="harvest-note"><span>Grown with care.</span><strong>Shared with community.</strong></span>
+        </div>
+    </section>
+    <div class="how-it-works" aria-label="How KhetWallah works"><span><b>01</b> Find your produce</span><span><b>02</b> Request a quantity</span><span><b>03</b> Arrange your pickup</span></div>
+    <div class="market-heading"><div><p class="eyebrow">Your next good find</p><h2 id="marketplace-title" tabindex="-1">Explore the marketplace</h2></div><span>Find your crop. Choose your farmer.</span></div>
     <form id="search-form">
+        <div class="crop-shortcuts" role="group" aria-label="Quick crop filters">
+            <span class="shortcut-label">Quick picks</span>
+            <button type="button" data-crop="" aria-pressed="true"><span aria-hidden="true">🌱</span> All crops</button>
+            <button type="button" data-crop="Tomato" aria-pressed="false"><span aria-hidden="true">🍅</span> Tomato</button>
+            <button type="button" data-crop="Potato" aria-pressed="false"><span aria-hidden="true">🥔</span> Potato</button>
+            <button type="button" data-crop="Onion" aria-pressed="false"><span aria-hidden="true">🧅</span> Onion</button>
+            <button type="button" data-crop="Wheat" aria-pressed="false"><span aria-hidden="true">🌾</span> Wheat</button>
+            <button type="button" data-crop="Banana" aria-pressed="false"><span aria-hidden="true">🍌</span> Banana</button>
+        </div>
         <fieldset id="search-controls" class="search-controls">
             <legend>Find produce</legend>
 
@@ -189,14 +97,52 @@
                 >
             </label>
 
-            <button type="submit">Search</button>
+            <div class="nearby-search-fields">
+                <label for="district-search">District<input id="district-search" maxlength="100" autocomplete="address-level2" placeholder="For example, Meerut"></label>
+                <label for="pin-search">PIN code<input id="pin-search" inputmode="numeric" maxlength="6" pattern="[1-9][0-9]{5}" autocomplete="postal-code" placeholder="250001"></label>
+                <label for="nearby-radius">Within<select id="nearby-radius"><option value="10">10 km</option><option value="25" selected>25 km</option><option value="50">50 km</option><option value="100">100 km</option><option value="200">200 km</option></select></label>
+                <button type="button" id="use-location" class="secondary">Use my location</button>
+                <button type="button" id="clear-location" class="secondary" hidden>Remove location</button>
+            </div>
+            <p id="location-status" class="form-help" role="status">Location is optional. Use district or PIN code to search manually.</p>
+            <button type="submit">Find crops ↗</button><button type="button" id="clear-search" class="secondary">Clear filters</button>
+            <details id="advanced-filters" class="filter-disclosure">
+                <summary><span><span class="filter-icon" aria-hidden="true">☷</span> Budget, sort &amp; availability <span id="refinement-count" class="refinement-count" hidden></span></span><span class="disclosure-chevron" aria-hidden="true">+</span></summary>
+                <div class="search-refinements">
+                <div class="price-range" role="group" aria-label="Price per kilogram">
+                    <label for="min-price">Min price (₹/kg)
+                        <input id="min-price" type="number" min="0" max="99999999.99" step="0.01" inputmode="decimal" placeholder="No minimum">
+                    </label>
+                    <label for="max-price">Max price (₹/kg)
+                        <input id="max-price" type="number" min="0" max="99999999.99" step="0.01" inputmode="decimal" placeholder="No maximum">
+                    </label>
+                </div>
+                <label for="sort-order">Sort crops
+                    <select id="sort-order">
+                        <option value="oldest" data-i18n="Default order">Default order</option>
+                        <option value="newest" data-i18n="Newest listings">Newest listings</option>
+                        <option value="price_asc" data-i18n="Price: low to high">Price: low to high</option>
+                        <option value="price_desc" data-i18n="Price: high to low">Price: high to low</option>
+                    </select>
+                </label>
+                <label class="stock-filter" for="in-stock-only">
+                    <input id="in-stock-only" type="checkbox"> In stock only
+                </label>
+                </div>
+            </details>
         </fieldset>
     </form>
 
-    <p id="message" role="status">Loading listings…</p>
+    <div class="results-toolbar">
+        <div><p id="message" role="status">Loading listings…</p><p id="filter-summary" class="filter-summary"></p><div id="active-filter-chips" class="active-filter-chips" role="group" aria-label="Applied filters"></div></div>
+        <button type="button" id="share-search" class="secondary">Copy search link</button>
+    </div>
+    <p id="share-feedback" class="share-feedback" role="status"></p>
+    <div id="share-fallback" class="share-fallback" hidden><label for="search-link">Copy this search link</label><input id="search-link" type="url" readonly></div>
 
     <p id="order-message" role="status"></p>
 
+    <div id="results-state" class="results-state" hidden></div>
     <div id="listings" class="grid" aria-label="Available crop listings"></div>
 
     <nav class="pagination" aria-label="Listing pages">
@@ -206,8 +152,44 @@
         <button id="reload" type="button">Refresh</button>
     </nav>
 </main>
-<script src="/listing-photos.js"></script>
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Connecting farmers and buyers, one harvest at a time.</span><small class="builder-credit">Built by <a href="https://www.linkedin.com/in/prashantkumarsr/" target="_blank" rel="noopener noreferrer"><b>Prashant</b></a></small></footer>
+<dialog id="crop-details" aria-labelledby="crop-detail-title">
+    <div class="dialog-heading"><p class="eyebrow">A closer look</p><button id="close-details" type="button" class="icon-button" aria-label="Close crop details" autofocus>×</button></div>
+    <div class="crop-detail-layout">
+        <div id="detail-photo" class="detail-photo"></div>
+        <div class="crop-detail-copy">
+            <span id="detail-stock" class="stock-badge"></span>
+            <h2 id="crop-detail-title"></h2>
+            <p class="detail-price"><strong id="detail-price"></strong><span> per kg</span></p>
+            <dl id="detail-facts" class="crop-facts"></dl>
+            <p id="detail-harvest-note" class="detail-note" data-i18n="Harvest dates are reported by the farmer and are not independently verified." hidden>Harvest dates are reported by the farmer and are not independently verified.</p>
+            <div class="pickup-explainer"><strong>How pickup works</strong><p>Request the quantity you need. Once the farmer accepts, check your order for the pickup time and meeting instructions.</p></div>
+            <p id="detail-feedback" role="status"></p>
+            <button id="detail-retry" class="secondary" type="button" hidden>Try again</button>
+            <button id="detail-request" type="button" disabled>Choose quantity →</button>
+            <a id="detail-page-link" class="detail-page-link" href="/">Open shareable crop page ↗</a>
+            <p class="detail-note">A request does not make a payment. Stock and price are checked when you place your order.</p>
+        </div>
+    </div>
+</dialog>
+<dialog id="order-dialog" aria-labelledby="order-title">
+    <form id="order-form">
+        <div class="dialog-heading"><p class="eyebrow">Your harvest basket</p><button id="close-order" type="button" class="icon-button" aria-label="Close order panel">×</button></div>
+        <h2 id="order-title">Request produce</h2>
+        <p id="order-description"></p>
+        <label for="order-quantity">How much do you need? <span>(kg)</span></label>
+        <input id="order-quantity" type="number" min="0.01" step="0.01" required inputmode="decimal" aria-describedby="order-description">
+        <div class="order-estimate"><span>Estimated total</span><strong id="order-total">₹0.00</strong></div>
+        <p class="muted">This sends a request to the farmer. Final price is confirmed when the order is placed; pickup follows acceptance.</p>
+        <p id="dialog-feedback" role="status"></p>
+        <a id="order-login" href="/login" hidden>Sign in to continue →</a>
+        <div class="dialog-actions"><button id="submit-order" type="submit">Request order</button><button id="cancel-order" class="secondary" type="button">Keep browsing</button></div>
+    </form>
+</dialog>
+<script src="/listing-photos.js?v=2026-10-19-realworld"></script>
+<script src="/listing-reports.js"></script><script src="/saved-controls.js"></script>
 <script>
+    const T = (key, params) => window.KhetI18n?.t(key, params) || key;
     const listingsElement = document.getElementById("listings");
     const messageElement = document.getElementById("message");
     const pageLabel = document.getElementById("page-label");
@@ -225,9 +207,127 @@
 const searchControls = document.getElementById("search-controls");
 const cropSearch = document.getElementById("crop-search");
 const areaSearch = document.getElementById("area-search");
+const districtSearch=document.getElementById("district-search"),pinSearch=document.getElementById("pin-search"),radiusSearch=document.getElementById("nearby-radius");
+const locationStatus=document.getElementById("location-status"),clearLocation=document.getElementById("clear-location");
+let selectedDistrict="",selectedPin="",nearbyLocation=null,selectedRadius="25";
+
+const minPriceInput = document.getElementById("min-price");
+const maxPriceInput = document.getElementById("max-price");
+const sortInput = document.getElementById("sort-order");
+const inStockInput = document.getElementById("in-stock-only");
+const shareSearchButton = document.getElementById("share-search");
+const shareFeedback = document.getElementById("share-feedback");
+const cropShortcuts = [...document.querySelectorAll("[data-crop]")];
+const quantityFormat = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
 
 let selectedCrop = "";
 let selectedArea = "";
+let selectedMinPrice = "";
+let selectedMaxPrice = "";
+let selectedSort = "oldest";
+let selectedInStock = false;
+let listingsRequestId = 0;
+let activeListingsController = null;
+
+function readSearchFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    cropSearch.value = (params.get("produceName") || "").slice(0, 100);
+    areaSearch.value = (params.get("area") || "").slice(0, 150);
+    districtSearch.value=(params.get("district") || "").slice(0,100);
+    pinSearch.value=/^[1-9][0-9]{5}$/.test(params.get("pinCode") || "") ? params.get("pinCode") : "";
+    const readPrice = name => {
+        const raw = params.get(name) || "";
+        return /^\d{1,8}(\.\d{1,2})?$/.test(raw) ? raw : "";
+    };
+    minPriceInput.value = readPrice("minPrice");
+    maxPriceInput.value = readPrice("maxPrice");
+    const sort = params.get("sort");
+    sortInput.value = ["oldest", "newest", "price_asc", "price_desc"].includes(sort) ? sort : "oldest";
+    inStockInput.checked = params.get("inStockOnly") === "true";
+    maxPriceInput.setCustomValidity("");
+    selectSearchInputs();
+    if (refinementCount() > 0) document.getElementById("advanced-filters").open = true;
+    const page = params.get("page") || "0";
+    return /^\d{1,6}$/.test(page) ? Number(page) : 0;
+}
+
+function refinementCount() {
+    return Number(selectedMinPrice !== "") + Number(selectedMaxPrice !== "")
+        + Number(selectedSort !== "oldest") + Number(selectedInStock) + Number(Boolean(selectedDistrict)) + Number(Boolean(selectedPin)) + Number(Boolean(nearbyLocation));
+}
+
+// A collapsed filter must open before native validation tries to focus its input.
+searchForm.addEventListener("invalid", event => {
+    if (event.target.closest("#advanced-filters")) {
+        document.getElementById("advanced-filters").open = true;
+    }
+}, true);
+
+function selectSearchInputs() {
+    selectedCrop = cropSearch.value.trim();
+    selectedArea = areaSearch.value.trim();
+    selectedDistrict=districtSearch.value.trim();selectedPin=pinSearch.value.trim();selectedRadius=radiusSearch.value;
+    selectedMinPrice = minPriceInput.value;
+    selectedMaxPrice = maxPriceInput.value;
+    selectedSort = sortInput.value;
+    selectedInStock = inStockInput.checked;
+}
+
+function searchParameters(page) {
+    const params = new URLSearchParams();
+    if (selectedCrop) params.set("produceName", selectedCrop);
+    if (selectedArea) params.set("area", selectedArea);
+    if(selectedDistrict)params.set("district",selectedDistrict);
+    if(selectedPin)params.set("pinCode",selectedPin);
+    if (selectedMinPrice !== "") params.set("minPrice", selectedMinPrice);
+    if (selectedMaxPrice !== "") params.set("maxPrice", selectedMaxPrice);
+    if (selectedInStock) params.set("inStockOnly", "true");
+    if (selectedSort !== "oldest") params.set("sort", selectedSort);
+    if (page > 0) params.set("page", String(page));
+    return params;
+}
+
+function updateSearchUrl(page, mode) {
+    const query = searchParameters(page).toString();
+    const url = `${window.location.pathname}${query ? "?" + query : ""}${window.location.hash}`;
+    const current = window.location.pathname + window.location.search + window.location.hash;
+    if (mode !== "none" && url !== current) {
+        window.history[mode === "push" ? "pushState" : "replaceState"](null, "", url);
+    }
+    const summary = [];
+    if (selectedCrop) summary.push(selectedCrop);
+    if (selectedArea) summary.push(selectedArea);
+    if(selectedDistrict)summary.push(selectedDistrict);
+    if(selectedPin)summary.push(`PIN ${selectedPin}`);
+    if(nearbyLocation)summary.push(`${T("Within")} ${selectedRadius} km · ${T("Location filter is not shared.")}`);
+    if (selectedMinPrice !== "") summary.push(`From ${currency.format(selectedMinPrice)}/kg`);
+    if (selectedMaxPrice !== "") summary.push(`Up to ${currency.format(selectedMaxPrice)}/kg`);
+    if (selectedInStock) summary.push(T("In stock only"));
+    if (selectedSort !== "oldest") summary.push(sortInput.selectedOptions[0].textContent);
+    document.getElementById("filter-summary").textContent = summary.join(" · ");
+    const chips=document.getElementById("active-filter-chips");chips.replaceChildren();
+    for(const [label,clear] of [
+        ...(selectedCrop?[[selectedCrop,()=>cropSearch.value=""]]:[]),
+        ...(selectedArea?[[selectedArea,()=>areaSearch.value=""]]:[]),
+        ...(selectedDistrict?[[selectedDistrict,()=>districtSearch.value=""]]:[]),
+        ...(selectedPin?[[`PIN ${selectedPin}`,()=>pinSearch.value=""]]:[]),
+        ...(selectedMinPrice!==""?[[`${T("Minimum price")}: ${selectedMinPrice}`,()=>minPriceInput.value=""]]:[]),
+        ...(selectedMaxPrice!==""?[[`${T("Maximum price")}: ${selectedMaxPrice}`,()=>maxPriceInput.value=""]]:[]),
+        ...(selectedInStock?[[T("In stock only"),()=>inStockInput.checked=false]]:[]),
+        ...(selectedSort!=="oldest"?[[sortInput.selectedOptions[0].textContent,()=>sortInput.value="oldest"]]:[]),
+        ...(nearbyLocation?[[`${selectedRadius} km`,()=>resetLocation()]]:[])]) {
+        const chip=document.createElement("button");chip.type="button";chip.className="filter-chip secondary";chip.textContent=label+" ×";chip.setAttribute("aria-label",`${T("Remove filter")}: ${label}`);
+        chip.addEventListener("click",()=>{if(listingsBusy)return;clear();selectSearchInputs();loadListings(0,"push");});chips.append(chip);
+    }
+    const refinementBadge = document.getElementById("refinement-count");
+    const count = refinementCount();
+    refinementBadge.textContent = `${count} applied`;
+    refinementBadge.hidden = count === 0;
+    cropShortcuts.forEach(button => button.setAttribute("aria-pressed",
+        String(button.dataset.crop.toLowerCase() === selectedCrop.toLowerCase())));
+    shareFeedback.textContent = "";
+    document.getElementById("share-fallback").hidden = true;
+}
 
     function addText(parent, tag, text, className) {
         const element = document.createElement(tag);
@@ -240,105 +340,184 @@ let selectedArea = "";
         parent.appendChild(element);
     }
 
-    async function loadListings(page) {
+    let listingsBusy = false;
+    function minimumOf(listing) {
+        const minimum = Number(listing?.minimumOrderQuantityKg);
+        return Number.isFinite(minimum) && minimum > 0 ? minimum : 0.01;
+    }
+    function canOrder(listing) {
+        return Number(listing?.availableQuantityKg) >= minimumOf(listing);
+    }
+    function stockLabel(listing) {
+        return Number(listing?.availableQuantityKg) <= 0 ? "Out of stock"
+            : canOrder(listing) ? "Available for pickup" : "Below minimum order";
+    }
+    function addCropFacts(parent, listing, detailed = false) {
+        parent.replaceChildren();
+        for (const [label, value] of [["Farmer", listing.farmerName],
+                ["Available", `${quantityFormat.format(listing.availableQuantityKg)} kg`],
+                ["Pickup area", listing.pickupArea],
+                ...(listing.district ? [["District", listing.district]] : []),
+                ...(detailed && listing.pinCode ? [["PIN code",listing.pinCode]] : []),
+                ...(detailed && listing.availableUntil ? [["Available until",listing.availableUntil]] : []),
+                ["Minimum order", `${quantityFormat.format(minimumOf(listing))} kg`],
+                ...(listing.variety ? [["Variety", listing.variety]] : []),
+                ...(detailed && listing.harvestDate ? [["Harvest date (farmer-reported)", listing.harvestDate]] : []),
+                ...(detailed && listing.packagingDetails ? [["Packaging", listing.packagingDetails]] : [])]) {
+            const row = document.createElement("div");
+            addText(row, "dt", T(label));
+            addText(row, "dd", value);
+            parent.appendChild(row);
+        }
+    }
+
+    function showListingSkeletons() {
+        listingsElement.replaceChildren();
+        for (let index = 0; index < 6; index++) {
+            const card = document.createElement("div");
+            card.className = "crop-skeleton";
+            card.setAttribute("aria-hidden", "true");
+            for (const className of ["skeleton-photo", "skeleton-line", "skeleton-line short", "skeleton-action"]) {
+                const block = document.createElement("span");
+                block.className = className;
+                card.appendChild(block);
+            }
+            listingsElement.appendChild(card);
+        }
+    }
+
+    function renderCropCard(listing) {
+        const card = document.createElement("article");
+        card.className = "card produce-card";
+        renderListingPhoto(card, listing);
+        const body = document.createElement("div");
+        body.className = "produce-card-body";
+        const available = canOrder(listing);
+        addText(body, "span", T(stockLabel(listing)),
+            available ? "stock-badge" : "stock-badge stock-empty");
+        const cropHeading = document.createElement("h2");
+        const cropPage = document.createElement("a");
+        cropPage.href = `/listing.html?id=${listing.id}`;
+        cropPage.textContent = listing.produceName;
+        cropHeading.appendChild(cropPage); body.appendChild(cropHeading);
+        const price = document.createElement("p"); price.className = "price";
+        addText(price, "strong", currency.format(listing.pricePerKg));
+        addText(price, "span", " / kg", "price-unit");
+        body.appendChild(price);
+        const facts = document.createElement("dl"); facts.className = "crop-facts";
+        addCropFacts(facts, listing); body.appendChild(facts);
+        const actions = document.createElement("div"); actions.className = "crop-card-actions";
+        const view = document.createElement("button");
+        view.type = "button"; view.className = "secondary"; view.textContent = T("View crop");
+        view.setAttribute("aria-label", `View ${listing.produceName} from ${listing.farmerName}`);
+        view.addEventListener("click", () => openCropDetails(listing, view));
+        const order = document.createElement("button");
+        order.type = "button"; order.textContent = T(available ? "Request produce" : stockLabel(listing));
+        order.disabled = !available;
+        order.addEventListener("click", () => placeOrder(listing));
+        actions.append(view, order); body.appendChild(actions);
+        window.enhanceListingActions?.(body,listing);
+        addListingReportControl(body, listing); card.appendChild(body);
+        return card;
+    }
+
+    async function loadListings(page, historyMode = "replace") {
+    const requestId = ++listingsRequestId;
+    if (activeListingsController) activeListingsController.abort();
+    updateSearchUrl(page, historyMode);
+    listingsBusy = true;
     searchControls.disabled = true;
+    cropShortcuts.forEach(button => button.disabled = true);
+    const state = document.getElementById("results-state");
+    state.hidden = true;
+    state.replaceChildren();
+    const controller = new AbortController();
+    activeListingsController = controller;
+    const timer = setTimeout(() => controller.abort(), 20000);
 
 
         previousButton.disabled = true;
         nextButton.disabled = true;
         reloadButton.disabled = true;
 
-        listingsElement.replaceChildren();
+        showListingSkeletons();
         pageLabel.textContent = "";
-        messageElement.textContent = "Loading listings…";
+        messageElement.textContent = T("Loading listings…");
         listingsElement.setAttribute("aria-busy", "true");
 
         try {
-            const params = new URLSearchParams({
-    page: String(page),
-    size: "6",
-    produceName: selectedCrop,
-    area: selectedArea
-});
+            const params = searchParameters(page);
+            params.set("page", String(page));
+            params.set("size", "6");
+            if(nearbyLocation) {params.set("lat",nearbyLocation.lat);params.set("lng",nearbyLocation.lng);params.set("radiusKm",selectedRadius);}
 
 const response = await fetch(
     `/api/listings?${params.toString()}`,
-    { headers: { "Accept": "application/json" } }
+    { headers: { "Accept": "application/json" }, signal: controller.signal }
 );
 
             if (!response.ok) {
-                throw new Error("Unable to load listings");
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Unable to load listings");
             }
 
             const data = await response.json();
+            if (requestId !== listingsRequestId) return;
 
             // If listings disappeared, return to the first page.
             if (page > 0 && data.content.length === 0) {
-                await loadListings(0);
+                await loadListings(0, "replace");
                 return;
             }
 
             currentPage = data.page;
-
+            listingsElement.replaceChildren();
             for (const listing of data.content) {
-                const card = document.createElement("article");
-                card.className = "card";
-                renderListingPhoto(card, listing);
-
-                addText(card, "h2", listing.produceName);
-                addText(
-                    card,
-                    "p",
-                    `${currency.format(listing.pricePerKg)} / kg`,
-                    "price"
-                );
-                addText(card, "p", `Farmer: ${listing.farmerName}`);
-                addText(
-                    card,
-                    "p",
-                    `Available: ${listing.availableQuantityKg} kg`
-                );
-
-                addText(card, "p", `Pickup: ${listing.pickupArea}`);
-
-const orderButton = document.createElement("button");
-orderButton.type = "button";
-orderButton.textContent = listing.availableQuantityKg > 0
-    ? "Order"
-    : "Out of stock";
-orderButton.disabled = listing.availableQuantityKg <= 0;
-orderButton.addEventListener("click", () => placeOrder(listing));
-card.appendChild(orderButton);
-
-listingsElement.appendChild(card);
+                listingsElement.appendChild(renderCropCard(listing));
             }
 
             messageElement.textContent = data.totalElements === 0
-                ? "No active listings match. Try another crop or area."
-                : `${data.totalElements} active listing(s) available.`;
+                ? T("No active listings match. Try another crop or area.")
+                : `${data.totalElements} crop listing${data.totalElements === 1 ? "" : "s"} available`;
+            if (data.totalElements === 0) {
+                state.hidden = false;
+                addText(state, "h3", T("A fresh search might help."));
+                addText(state, "p", T("Try a different crop or nearby pickup area, or clear your filters to see all listings."));
+            }
 
             pageLabel.textContent = data.totalPages === 0
-                ? "No pages"
-                : `Page ${data.page + 1} of ${data.totalPages}`;
+                ? T("No pages")
+                : T("pageOf", {page:data.page+1,total:data.totalPages});
 
             previousButton.disabled = data.page === 0;
             nextButton.disabled = data.page + 1 >= data.totalPages;
         } catch (error) {
-            messageElement.textContent =
-                "We couldn't load the crops. Please try Refresh.";
+            if (requestId !== listingsRequestId) return;
+            listingsElement.replaceChildren();
+            messageElement.textContent = T("We couldn't load the crops.");
+            state.hidden = false;
+            addText(state, "h3", T("Let's try that again."));
+            addText(state, "p", error.name === "AbortError" || error instanceof TypeError
+                ? T("Check your connection, then use Refresh below. Your search filters are still here.")
+                : error.message);
         } finally {
+        clearTimeout(timer);
+        if (requestId !== listingsRequestId) return;
+        listingsBusy = false;
+        activeListingsController = null;
         reloadButton.disabled = false;
         searchControls.disabled = false;
+        cropShortcuts.forEach(button => button.disabled = false);
         listingsElement.setAttribute("aria-busy", "false");
         }
     }
 
     previousButton.addEventListener("click", () => {
-        loadListings(currentPage - 1);
+        loadListings(currentPage - 1, "push");
     });
 
     nextButton.addEventListener("click", () => {
-        loadListings(currentPage + 1);
+        loadListings(currentPage + 1, "push");
     });
 
     reloadButton.addEventListener("click", () => {
@@ -352,13 +531,55 @@ listingsElement.appendChild(card);
         return;
     }
 
-    selectedCrop = cropSearch.value.trim();
-    selectedArea = areaSearch.value.trim();
-
-    loadListings(0);
+    maxPriceInput.setCustomValidity("");
+    if (minPriceInput.value !== "" && maxPriceInput.value !== ""
+            && Number(minPriceInput.value) > Number(maxPriceInput.value)) {
+        maxPriceInput.setCustomValidity(T("Maximum price must be at least the minimum price."));
+    }
+    if (!searchForm.reportValidity()) return;
+    selectSearchInputs();
+    loadListings(0, "push");
 });
 
-    loadListings(0);
+    [minPriceInput, maxPriceInput].forEach(input => input.addEventListener("input", () => maxPriceInput.setCustomValidity("")));
+    cropShortcuts.forEach(button => button.addEventListener("click", () => {
+        if (listingsBusy) return;
+        cropSearch.value = button.dataset.crop;
+        searchForm.requestSubmit();
+    }));
+
+    document.getElementById("clear-search").addEventListener("click", () => {
+        if (listingsBusy) return;
+        searchForm.reset(); resetLocation(); maxPriceInput.setCustomValidity(""); selectSearchInputs();
+        loadListings(0, "push");
+    });
+    window.addEventListener("popstate", () => loadListings(readSearchFromUrl(), "none"));
+    shareSearchButton.addEventListener("click", async () => {
+        const link = window.location.href;
+        try {
+            if (!navigator.clipboard || !window.isSecureContext) throw new Error("Clipboard unavailable");
+            await navigator.clipboard.writeText(link);
+            shareFeedback.textContent = T("Search link copied. Anyone opening it will see these filters.") + (nearbyLocation ? " " + T("Location filter is not shared.") : "");
+        } catch (_) {
+            const fallback = document.getElementById("share-fallback");
+            const input = document.getElementById("search-link");
+            input.value = link; fallback.hidden = false; input.focus(); input.select();
+            shareFeedback.textContent = T("Select and copy the search link below.");
+        }
+    });
+    function resetLocation() {nearbyLocation=null;clearLocation.hidden=true;locationStatus.textContent=T("Location is optional. Use district or PIN code to search manually.");}
+    clearLocation.addEventListener("click",()=>{resetLocation();selectSearchInputs();loadListings(0,"push");});
+    document.getElementById("use-location").addEventListener("click",()=> {
+        const button=document.getElementById("use-location");
+        if(!navigator.geolocation) {locationStatus.textContent=T("Location is unavailable. Search by district or PIN code instead.");return;}
+        button.disabled=true;locationStatus.textContent=T("Finding your location…");
+        navigator.geolocation.getCurrentPosition(position=> {
+            nearbyLocation={lat:position.coords.latitude.toFixed(6),lng:position.coords.longitude.toFixed(6)};
+            clearLocation.hidden=false;button.disabled=false;locationStatus.textContent=T("Nearby search is on for this tab. Your location is not saved or included in shared links.");
+            selectSearchInputs();loadListings(0,"replace");
+        },()=>{button.disabled=false;locationStatus.textContent=T("Location access was unavailable. You can still search by district or PIN code.");}, {timeout:10000,maximumAge:0,enableHighAccuracy:false});
+    });
+    loadListings(readSearchFromUrl());
     async function loadAccountNavigation() {
     const navigation = document.getElementById("account-navigation");
 
@@ -384,30 +605,44 @@ listingsElement.appendChild(card);
         navigation.replaceChildren();
 
         const greeting = document.createElement("span");
-        greeting.textContent = `Hello, ${account.displayName}`;
+        greeting.textContent = T("welcomeName", {name:account.displayName});
         navigation.appendChild(greeting);
+        const accountLink = document.createElement("a");
+        accountLink.href = "/account.html"; accountLink.textContent = T("My account");
+        navigation.appendChild(accountLink);
+        const notificationsLink = document.createElement("a");
+        notificationsLink.href = "/notifications.html"; notificationsLink.textContent = T("Notifications");
+        navigation.appendChild(notificationsLink);
 
         const ordersLink = document.createElement("a");
         ordersLink.href = "/my-orders.html";
-        ordersLink.textContent = "My Orders";
+        ordersLink.textContent = T("My orders");
         navigation.appendChild(ordersLink);
         const receivedLink = document.createElement("a");
        receivedLink.href = "/received-orders.html";
-       receivedLink.textContent = "Orders Received";
+       receivedLink.textContent = T("Received orders");
        navigation.appendChild(receivedLink);
 
         const createLink = document.createElement("a");
         createLink.href = "/create-listing.html";
-        createLink.textContent = "Post a crop";
+        createLink.textContent = T("Post a crop");
         navigation.appendChild(createLink);
         const myListingsLink = document.createElement("a");
         myListingsLink.href = "/my-listings.html";
-        myListingsLink.textContent = "My listings";
+        myListingsLink.textContent = T("My listings");
         navigation.appendChild(myListingsLink);
+
+        const adminCheck = await fetch("/api/admin/me", { redirect: "manual" });
+        if (adminCheck.ok) {
+            const adminLink = document.createElement("a");
+            adminLink.href = "/admin.html";
+            adminLink.textContent = "🛡️ Admin";
+            navigation.appendChild(adminLink);
+        }
 
         const logoutLink = document.createElement("a");
         logoutLink.href = "/logout";
-        logoutLink.textContent = "Sign out";
+        logoutLink.textContent = T("Sign out");
         navigation.appendChild(logoutLink);
     } catch (error) {
         // Keep the existing Sign in link if the account check fails.
@@ -418,95 +653,164 @@ listingsElement.appendChild(card);
 loadAccountNavigation();
 
     let placingOrder = false;
+    let selectedListing = null;
+    const orderDialog = document.getElementById("order-dialog");
+    const orderQuantity = document.getElementById("order-quantity");
+    const dialogFeedback = document.getElementById("dialog-feedback");
+    const submitOrder = document.getElementById("submit-order");
+    const detailsDialog = document.getElementById("crop-details");
+    const detailRequest = document.getElementById("detail-request");
+    const detailFeedback = document.getElementById("detail-feedback");
+    const detailRetry = document.getElementById("detail-retry");
+    let detailListing = null;
+    let detailSnapshot = null;
+    let detailOpener = null;
+    let detailController = null;
+    let detailRequestId = 0;
 
-async function placeOrder(listing) {
-    if (placingOrder) return;
-
-    const feedback = document.getElementById("order-message");
-    const entered = prompt(
-        `How many kg of ${listing.produceName}? Available: ${listing.availableQuantityKg} kg`
-    );
-
-    if (entered === null) return;
-
-    const value = entered.trim();
-    const quantity = Number(value);
-
-    if (!/^\d+(\.\d{1,2})?$/.test(value)
-            || quantity <= 0
-            || quantity > Number(listing.availableQuantityKg)) {
-        feedback.textContent =
-            "Enter a positive quantity within the available stock, with at most 2 decimal places.";
-        return;
+    function displayCropDetails(listing) {
+        document.getElementById("crop-detail-title").textContent = listing.produceName;
+        document.getElementById("detail-price").textContent = currency.format(listing.pricePerKg);
+        const available = canOrder(listing);
+        const badge = document.getElementById("detail-stock");
+        badge.textContent = T(stockLabel(listing));
+        badge.className = available ? "stock-badge" : "stock-badge stock-empty";
+        addCropFacts(document.getElementById("detail-facts"), listing, true);
+        document.getElementById("detail-harvest-note").hidden = !listing.harvestDate;
+        renderListingGallery(document.getElementById("detail-photo"), listing);
     }
 
-    if (!confirm(
-        `Request ${quantity} kg of ${listing.produceName}? ` +
-        `Estimated total: ${currency.format(quantity * Number(listing.pricePerKg))}. ` +
-        "The server uses the current listing price."
-    )) return;
-
-    placingOrder = true;
-    feedback.textContent = "Placing your order…";
-
-    try {
-        const tokenResponse = await fetch("/api/csrf", {
-            redirect: "error"
-        });
-
-        if (!tokenResponse.ok) {
-            throw new Error("Could not prepare the request. Refresh and try again.");
+    async function openCropDetails(listing, trigger = detailOpener) {
+        document.getElementById("detail-page-link").href = `/listing.html?id=${listing.id}`;
+        detailOpener = trigger; detailSnapshot = listing; detailListing = null;
+        const requestId = ++detailRequestId;
+        if (detailController) detailController.abort();
+        detailController = new AbortController();
+        const controller = detailController;
+        const timer = setTimeout(() => controller.abort(), 15000);
+        displayCropDetails(listing);
+        detailRequest.disabled = true; detailRequest.textContent = T("Checking availability…");
+        detailRetry.hidden = true; detailFeedback.textContent = T("Checking the latest price and stock…");
+        if (!detailsDialog.open) detailsDialog.showModal();
+        try {
+            const response = await fetch(`/api/listings/${encodeURIComponent(listing.id)}`, {
+                headers: { "Accept": "application/json" }, signal: controller.signal
+            });
+            if (!response.ok) throw new Error(response.status === 404
+                ? T("This crop is no longer available. Close this panel and refresh the listings.")
+                : T("We couldn't check this crop. Please try again."));
+            const fresh = await response.json();
+            if (requestId !== detailRequestId || !detailsDialog.open) return;
+            detailListing = fresh; displayCropDetails(fresh);
+            detailRequest.disabled = !canOrder(fresh);
+            detailRequest.textContent = T(detailRequest.disabled ? stockLabel(fresh) : "Choose quantity →");
+            detailFeedback.textContent = T("Latest availability checked. The farmer confirms pickup after accepting your request.");
+        } catch (error) {
+            if (requestId !== detailRequestId || !detailsDialog.open) return;
+            detailRequest.textContent = T("Unavailable right now");
+            detailFeedback.textContent = error.name === "AbortError" || error instanceof TypeError
+                ? T("Connection interrupted. Try again to check the latest availability.") : error.message;
+            detailRetry.hidden = false;
+        } finally {
+            clearTimeout(timer);
         }
-
-        const csrf = await tokenResponse.json();
-
-        const response = await fetch("/api/orders", {
-            method: "POST",
-            redirect: "manual",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                [csrf.headerName]: csrf.token
-            },
-            body: JSON.stringify({
-                listingId: listing.id,
-                quantityKg: quantity
-            })
-        });
-
-        if (response.type === "opaqueredirect"
-                || response.status === 401) {
-            feedback.textContent = "Please sign in before ordering.";
-            const link = document.createElement("a");
-            link.href = "/login";
-            link.textContent = " Sign in";
-            feedback.appendChild(link);
-            return;
-        }
-
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-            const details = Object.values(data.fieldErrors || {});
-            throw new Error(
-                details.join(" ") || data.message
-                || `Order rejected (${response.status}). Refresh and try again.`
-            );
-        }
-
-        feedback.textContent =
-            `Order #${data.id} placed: ${data.quantityKg} kg, ` +
-            `total ${currency.format(data.totalAmount)}, status ${data.status}.`;
-
-        await loadListings(currentPage);
-    } catch (error) {
-        feedback.textContent = error instanceof TypeError
-            ? "Connection problem. Check the database before retrying; the order may have been saved."
-            : error.message;
-    } finally {
-        placingOrder = false;
     }
-}
+
+    document.getElementById("close-details").addEventListener("click", () => detailsDialog.close());
+    detailRetry.addEventListener("click", () => openCropDetails(detailSnapshot));
+    detailsDialog.addEventListener("close", () => {
+        ++detailRequestId;
+        if (detailController) detailController.abort();
+        if (!orderDialog.open) {
+            const target = detailOpener && detailOpener.isConnected ? detailOpener : document.getElementById("marketplace-title");
+            target.focus({ preventScroll: true });
+        }
+    });
+    detailRequest.addEventListener("click", () => {
+        if (!detailListing || detailRequest.disabled) return;
+        const listing = detailListing;
+        detailsDialog.close();
+        placeOrder(listing);
+    });
+    const closeOrder = () => { if (!placingOrder) orderDialog.close(); };
+    document.getElementById("close-order").addEventListener("click", closeOrder);
+    document.getElementById("cancel-order").addEventListener("click", closeOrder);
+    orderDialog.addEventListener("cancel", event => { if (placingOrder) event.preventDefault(); });
+    function updateEstimate() {
+        document.getElementById("order-total").textContent = currency.format(
+            Math.max(0, Number(orderQuantity.value) || 0) * Number(selectedListing.pricePerKg));
+    }
+    orderQuantity.addEventListener("input", updateEstimate);
+    function updateOrderDescription() {
+        if (!selectedListing) return;
+        const listing = selectedListing;
+        document.getElementById("order-description").textContent =
+            `${listing.farmerName} · ${listing.pickupArea} · ${quantityFormat.format(listing.availableQuantityKg)} kg · ${currency.format(listing.pricePerKg)} / kg · ${T("minimumQuantity", {quantity:quantityFormat.format(minimumOf(listing))})}`;
+    }
+    function placeOrder(listing) {
+        if (placingOrder || !canOrder(listing)) return;
+        document.getElementById("order-login").href = `/login?next=${encodeURIComponent(`/listing.html?id=${listing.id}`)}`;
+        selectedListing = listing;
+        document.getElementById("order-title").textContent = listing.produceName;
+        updateOrderDescription();
+        orderQuantity.min = String(minimumOf(listing));
+        orderQuantity.max = String(listing.availableQuantityKg);
+        orderQuantity.value = String(Math.max(minimumOf(listing), Math.min(1, Number(listing.availableQuantityKg))));
+        dialogFeedback.textContent = "";
+        document.getElementById("order-login").hidden = true;
+        updateEstimate(); orderDialog.showModal(); orderQuantity.focus();
+    }
+    document.getElementById("order-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        if (placingOrder || !event.currentTarget.reportValidity()) return;
+        const quantity = Number(orderQuantity.value);
+        if (!Number.isFinite(quantity) || quantity < minimumOf(selectedListing) || quantity > Number(selectedListing.availableQuantityKg)) return;
+        placingOrder = true;
+        orderDialog.querySelectorAll("button, input").forEach(element => element.disabled = true);
+        dialogFeedback.textContent = T("Sending your request…");
+        // A timeout does not imply the server rejected an order: never retry a POST automatically.
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 20000);
+        try {
+            const tokenResponse = await fetch("/api/csrf", { redirect: "error", signal: controller.signal });
+            if (!tokenResponse.ok) throw new Error(T("Couldn't prepare your order. Refresh and try again."));
+            const csrf = await tokenResponse.json();
+            const response = await fetch("/api/orders", {
+                method: "POST", redirect: "manual", signal: controller.signal,
+                headers: { "Content-Type": "application/json", "Accept": "application/json", [csrf.headerName]: csrf.token },
+                body: JSON.stringify({ listingId: selectedListing.id, quantityKg: quantity })
+            });
+            if (response.type === "opaqueredirect" || response.status === 401) {
+                document.getElementById("order-login").hidden = false;
+                throw new Error(T("Please sign in to request produce."));
+            }
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(Object.values(data.fieldErrors || {}).join(" ") || data.message || `Order not placed (${response.status}). Refresh and check availability.`);
+            orderDialog.close();
+            const feedback = document.getElementById("order-message");
+            feedback.textContent = `Order #${data.id} requested · ${data.quantityKg} kg · ${currency.format(data.totalAmount)}. `;
+            const link = document.createElement("a"); link.href = "/my-orders.html"; link.textContent = T("View my orders →"); feedback.appendChild(link);
+            feedback.tabIndex = -1; feedback.focus();
+            await loadListings(currentPage);
+        } catch (error) {
+            dialogFeedback.textContent = error instanceof TypeError || error.name === "AbortError"
+                ? T("Connection interrupted. Check My Orders before retrying; your request may have been saved.")
+                : error.message;
+        } finally {
+            clearTimeout(timer); placingOrder = false;
+            orderDialog.querySelectorAll("button, input").forEach(element => element.disabled = false);
+        }
+    });
+    document.addEventListener("khet:languagechange", () => {
+        loadListings(currentPage, "none");
+        loadAccountNavigation();
+        if (detailsDialog.open && detailListing) {
+            displayCropDetails(detailListing);
+            detailRequest.disabled = !canOrder(detailListing);
+            detailRequest.textContent = T(detailRequest.disabled ? stockLabel(detailListing) : "Choose quantity →");
+        }
+        if (orderDialog.open) { updateOrderDescription(); updateEstimate(); }
+    });
 </script>
 </body>
 </html>

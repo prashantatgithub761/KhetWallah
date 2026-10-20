@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>KhetWallah administration</title>
+  <style>
+    body{font:16px system-ui,sans-serif;margin:0;background:#f5f7f2;color:#182519}header{background:#174a2a;color:white;padding:18px 5%}header a{color:white}main{max-width:1100px;margin:28px auto;padding:0 18px}section{background:white;border:1px solid #d7dfd3;border-radius:12px;padding:20px;margin:22px 0}h1,h2{margin-top:0}.row{display:flex;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid #e3e8e0;padding:13px 0}.row:first-child{border:0}.details{overflow-wrap:anywhere}small{display:block;color:#536456}button{border:0;border-radius:7px;background:#174a2a;color:white;padding:9px 12px;cursor:pointer}button.danger{background:#a32424}button:disabled{opacity:.5;cursor:default}.pager{display:flex;gap:10px;align-items:center;margin-top:12px}.error{color:#a32424}#notice{min-height:24px}
+  </style>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
+    <script src="/order-messages.js?v=20261020-marketplace" defer></script>
+    <script src="/admin-messages.js?v=20261020-marketplace" defer></script>
+</head>
+<body class="admin-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="app-header"><div class="header-content"><a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a><nav class="page-navigation" aria-label="Main navigation"><a href="/notifications.html">Notifications</a><a href="/account.html">My account</a><a href="/">Browse crops</a><a href="/my-listings.html">My listings</a><a href="/my-orders.html">My orders</a><a href="/admin.html" aria-current="page">Administration</a></nav></div></header>
+<main id="main-content">
+  <div class="page-heading">
+    <div class="page-heading-copy">
+      <p class="workspace-kicker">Community care</p>
+      <h1>Administration</h1>
+      <p class="page-intro">Keep the marketplace useful and welcoming. Review reports, manage listings, and record the reason behind each moderation action.</p>
+    </div>
+    <div class="page-action"><a class="button-link secondary" href="/">View marketplace <span aria-hidden="true">↗</span></a></div>
+  </div>
+  <p id="notice" role="status"></p>
+  <section aria-labelledby="reports-heading">
+    <div class="admin-section-heading"><div><h2 id="reports-heading">Reported listings</h2><p class="section-description">Review each report before dismissing it or hiding a listing.</p></div><div class="admin-filter"><label for="reports-status">Show reports</label><select id="reports-status"><option value="OPEN">Awaiting review</option><option value="DISMISSED">Dismissed</option><option value="HIDDEN">Resolved by hiding</option></select></div></div>
+    <div id="reports" aria-live="polite"></div>
+    <div class="pager"><button id="reports-prev">Previous</button><span id="reports-page"></span><button id="reports-next">Next</button></div>
+  </section>
+  <section aria-labelledby="listings-heading"><div class="admin-section-heading"><div><h2 id="listings-heading">Listings</h2><p class="section-description">Hide unsuitable content and restore listings when appropriate.</p></div></div><div id="listings"></div><div class="pager"><button id="listings-prev">Previous</button><span id="listings-page"></span><button id="listings-next">Next</button></div></section>
+  <section aria-labelledby="users-heading"><div class="admin-section-heading"><div><h2 id="users-heading">Accounts</h2><p class="section-description">Suspending an account also hides its active listings.</p></div></div><div id="users"></div><div class="pager"><button id="users-prev">Previous</button><span id="users-page"></span><button id="users-next">Next</button></div></section>
+  <section aria-labelledby="actions-heading"><div class="admin-section-heading"><div><h2 id="actions-heading">Recent moderation actions</h2><p class="section-description">See who took an action, when it happened, and the reason given.</p></div></div><div id="actions"></div></section>
+<section id="admin-reviews" aria-label="Review moderation"></section>
+<section id="admin-messages" class="dashboard-panel"></section>
+</main>
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
+<script src="/admin-reviews.js?v=2026-10-19-realworld" defer></script>
+<script src="/admin.js" defer></script>
+</body>
+</html>

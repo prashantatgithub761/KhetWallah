@@ -1,5 +1,6 @@
 package com.prashant.KhetWallah.listing;
 import java.security.Principal;
+import java.math.BigDecimal;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,7 +41,16 @@ public class ListingController {
             int page,
 
             @RequestParam(name = "size", defaultValue = "10")
-            int size
+            int size,
+            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
+            @RequestParam(name = "inStockOnly", defaultValue = "false") boolean inStockOnly,
+            @RequestParam(name = "sort", defaultValue = "oldest") String sort,
+            @RequestParam(name = "district", required = false) String district,
+            @RequestParam(name = "pinCode", required = false) String pinCode,
+            @RequestParam(name = "lat", required = false) BigDecimal lat,
+            @RequestParam(name = "lng", required = false) BigDecimal lng,
+            @RequestParam(name = "radiusKm", required = false) BigDecimal radiusKm
     ) {
         if (page < 0) {
             throw new ResponseStatusException(
@@ -56,11 +66,18 @@ public class ListingController {
             );
         }
 
+        if (district != null || pinCode != null || lat != null || lng != null || radiusKm != null)
+            return listingService.getAllListings(produceName, area, page, size, minPrice, maxPrice,
+                    inStockOnly, sort, district, pinCode, lat, lng, radiusKm);
         return listingService.getAllListings(
                 produceName,
                 area,
                 page,
-                size
+                size,
+                minPrice,
+                maxPrice,
+                inStockOnly,
+                sort
         );
     }
     @GetMapping("/api/listings/{id}")
@@ -100,6 +117,12 @@ public class ListingController {
                 request,
                 principal.getName()
         );
+    }
+    @PostMapping({"/api/listings/{id}/pause", "/api/listings/{id}/resume", "/api/listings/{id}/sold-out"})
+    public ProduceListing availability(@PathVariable("id") Long id, Principal principal,
+            jakarta.servlet.http.HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return listingService.changeAvailability(id, principal.getName(), path.substring(path.lastIndexOf('/') + 1));
     }
     @PostMapping("/api/listings/{id}/close")
     public ResponseEntity<Void> closeListing(

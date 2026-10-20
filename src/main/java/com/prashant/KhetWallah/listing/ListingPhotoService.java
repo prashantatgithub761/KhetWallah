@@ -60,37 +60,15 @@ public class ListingPhotoService {
             );
         }
 
-        if (listing.getStatus() != ListingStatus.ACTIVE) {
+        if (listing.getStatus() == ListingStatus.CLOSED || listing.getStatus() == ListingStatus.HIDDEN) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Closed listings cannot be edited"
             );
         }
 
-        BufferedImage image = decodeImage(file);
-        String newName = UUID.randomUUID() + ".jpg";
+        String newName = writeImage(file);
         String oldName = listing.getPhotoFileName();
-        Path destination = uploadDirectory.resolve(newName);
-
-        try {
-            Files.createDirectories(uploadDirectory);
-
-            try (var output = Files.newOutputStream(
-                    destination,
-                    StandardOpenOption.CREATE_NEW,
-                    StandardOpenOption.WRITE
-            )) {
-                if (!ImageIO.write(image, "jpg", output)) {
-                    throw new IOException("JPEG writer unavailable");
-                }
-            }
-        } catch (IOException exception) {
-            deleteQuietly(newName);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Could not save the photo. Please try again."
-            );
-        }
 
         try {
             listing.changePhoto(newName);
@@ -125,21 +103,42 @@ public class ListingPhotoService {
                         HttpStatus.NOT_FOUND, "Listing not found"
                 ));
 
-        String filename = listing.getPhotoFileName();
-
-        if (filename == null
-                || !filename.matches("[0-9a-f-]{36}\\.jpg")) {
+        if (listing.getStatus() == ListingStatus.HIDDEN || listing.getOwner() != null && listing.getOwner().isSuspended()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Photo not found"
             );
         }
 
+        return readFile(listing.getPhotoFileName());
+    }
+
+    byte[] readFile(String filename) {
+        if (filename == null || !filename.matches("[0-9a-f-]{36}\\.jpg"))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Photo not found");
+        try { return Files.readAllBytes(uploadDirectory.resolve(filename)); }
+        catch (IOException ex) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Photo not found"); }
+    }
+
+    String writeImage(MultipartFile file) {
+        BufferedImage image = decodeImage(file);
+        String filename = UUID.randomUUID() + ".jpg";
         try {
-            return Files.readAllBytes(uploadDirectory.resolve(filename));
-        } catch (IOException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Photo not found"
-            );
+            Files.createDirectories(uploadDirectory);
+            try (var output = ImageIO.createImageOutputStream(Files.newOutputStream(uploadDirectory.resolve(filename),
+                    StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE))) {
+                var writer = ImageIO.getImageWritersByFormatName("jpg").next();
+                try {
+                    var parameters = writer.getDefaultWriteParam();
+                    parameters.setCompressionMode(javax.imageio.ImageWriteParam.MODE_EXPLICIT);
+                    parameters.setCompressionQuality(0.82f);
+                    writer.setOutput(output);
+                    writer.write(null, new javax.imageio.IIOImage(image, null, null), parameters);
+                } finally { writer.dispose(); }
+            }
+            return filename;
+        } catch (IOException ex) {
+            deleteQuietly(filename);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save the photo. Please try again.");
         }
     }
 
@@ -200,16 +199,18 @@ public class ListingPhotoService {
 
                     BufferedImage original = reader.read(0);
 
-                    BufferedImage clean = new BufferedImage(
-                            width, height, BufferedImage.TYPE_INT_RGB
-                    );
+                    double scale = Math.min(1d, 1600d / Math.max(width, height));
+                    int targetWidth = Math.max(1, (int)Math.round(width * scale));
+                    int targetHeight = Math.max(1, (int)Math.round(height * scale));
+                    BufferedImage clean = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
 
                     Graphics2D graphics = clean.createGraphics();
 
                     try {
                         graphics.setColor(Color.WHITE);
-                        graphics.fillRect(0, 0, width, height);
-                        graphics.drawImage(original, 0, 0, null);
+                        graphics.fillRect(0, 0, targetWidth, targetHeight);
+                        graphics.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                        graphics.drawImage(original, 0, 0, targetWidth, targetHeight, null);
                     } finally {
                         graphics.dispose();
                     }
@@ -228,7 +229,7 @@ public class ListingPhotoService {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
     }
 
-    private void deleteQuietly(String filename) {
+    void deleteQuietly(String filename) {
         if (filename == null
                 || !filename.matches("[0-9a-f-]{36}\\.jpg")) {
             return;

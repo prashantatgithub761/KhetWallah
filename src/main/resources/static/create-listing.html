@@ -4,116 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Post a crop | KhetWallah</title>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
 
-    <style>
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            padding: 24px;
-            background: #f5f7f2;
-            color: #203326;
-            font-family: Arial, sans-serif;
-            line-height: 1.5;
-        }
-
-        main {
-            max-width: 560px;
-            margin: 24px auto;
-            padding: 28px;
-            background: white;
-            border: 1px solid #dbe4d9;
-            border-radius: 12px;
-        }
-
-        a { color: #174c35; }
-
-        label {
-            display: block;
-            margin-top: 18px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border: 1px solid #879b8b;
-            border-radius: 6px;
-            font: inherit;
-        }
-
-        button {
-            margin-top: 24px;
-            padding: 12px 20px;
-            background: #174c35;
-            color: white;
-            border: 0;
-            border-radius: 8px;
-            font: inherit;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: default;
-        }
-
-        :focus-visible {
-            outline: 3px solid #d49b24;
-            outline-offset: 3px;
-        }
-
-        #message { white-space: pre-line; }
-    </style>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
 </head>
+<body class="form-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="app-header">
+    <div class="header-content">
+        <a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a>
+        <nav class="page-navigation" aria-label="Main navigation"><a href="/notifications.html">Notifications</a><a href="/account.html">My account</a><a href="/">Browse crops</a><a href="/create-listing.html" aria-current="page">Sell produce</a><a href="/my-listings.html">My listings</a><a href="/my-orders.html">My orders</a><a href="/received-orders.html">Received</a></nav>
+    </div>
+</header>
+<main id="main-content" class="form-workspace">
 
-<body>
-<main>
-    <a href="/">← Browse crops</a>
-
-    <h1>Post a crop</h1>
-    <p>Your listing will be published under your account’s display name.</p>
-
-    <form id="listing-form">
-        <label for="produce-name">Crop name</label>
-        <input id="produce-name" required maxlength="100"
-               placeholder="For example, Onion">
-
-        <label for="quantity">Available quantity (kg)</label>
-        <input id="quantity" type="number" required
-               min="0.01" max="99999999.99" step="0.01">
-
-        <label for="price">Price per kg (₹)</label>
-        <input id="price" type="number" required
-               min="0.01" max="99999999.99" step="0.01">
-
-        <label for="pickup-area">Pickup area</label>
-        <input id="pickup-area" required maxlength="150"
-               placeholder="For example, Meerut">
-
-        <label for="crop-photo">Crop photo — optional</label>
-        <input
-                id="crop-photo"
-                type="file"
-                accept="image/jpeg,image/png"
-        >
-        <p>JPEG or PNG, up to 5 MB. Maximum 8 megapixels.</p>
-
-        <button id="submit-button" type="submit">Publish listing</button>
-    </form>
-
-    <p id="message" role="status"></p>
-    <a id="login-link" href="/login" hidden>Sign in again</a>
+    <section class="form-surface" aria-labelledby="post-heading">
+        <p class="form-kicker">Sell on KhetWallah</p>
+        <h1 id="post-heading">Post your produce</h1>
+        <p class="form-help">Your listing will appear under your account’s display name. Start with the details buyers need.</p>
+        <form id="listing-form">
+            <div class="field-group">
+                <label for="produce-name">Crop name</label>
+                <input id="produce-name" required maxlength="100" placeholder="For example, Onion">
+            </div>
+            <div class="form-grid">
+                <div class="field-group">
+                    <label for="quantity">Available quantity (kg)</label>
+                    <input id="quantity" type="number" inputmode="decimal" required min="0.01" max="99999999.99" step="0.01" placeholder="40.00">
+                </div>
+                <div class="field-group">
+                    <label for="price">Price per kg (₹)</label>
+                    <input id="price" type="number" inputmode="decimal" required min="0.01" max="99999999.99" step="0.01" placeholder="25.00">
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="pickup-area">Pickup area</label>
+                <input id="pickup-area" required maxlength="150" placeholder="For example, Meerut" aria-describedby="pickup-area-help">
+                <small id="pickup-area-help" class="form-help">Share the locality here. You can arrange specific pickup details after accepting an order.</small>
+            </div>
+            <fieldset class="crop-extra-fields">
+                <legend data-i18n="Crop details">Crop details</legend>
+                <p class="form-help" data-i18n="Optional details help buyers plan. Harvest dates are provided by the farmer, not independently verified.">Optional details help buyers plan. Harvest dates are provided by the farmer, not independently verified.</p>
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="crop-variety" data-i18n="Variety (optional)">Variety (optional)</label>
+                        <input id="crop-variety" maxlength="100" placeholder="For example, Pusa Red" data-i18n-placeholder="For example, Pusa Red">
+                    </div>
+                    <div class="field-group">
+                        <label for="harvest-date" data-i18n="Harvest date (farmer-reported)">Harvest date (farmer-reported)</label>
+                        <input id="harvest-date" type="date">
+                    </div>
+                    <div class="field-group">
+                        <label for="minimum-quantity" data-i18n="Minimum order (kg)">Minimum order (kg)</label>
+                        <input id="minimum-quantity" type="number" inputmode="decimal" min="0.01" max="99999999.99" step="0.01" value="0.01" required aria-describedby="minimum-help">
+                        <small id="minimum-help" class="form-help" data-i18n="Buyers must request at least this quantity. It cannot exceed your available stock.">Buyers must request at least this quantity. It cannot exceed your available stock.</small>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label for="packaging-details" data-i18n="Packaging details (optional)">Packaging details (optional)</label>
+                    <textarea id="packaging-details" maxlength="300" rows="3" placeholder="For example, Bring your own bags; sold loose" data-i18n-placeholder="For example, Bring your own bags; sold loose"></textarea>
+                </div>
+            </fieldset>
+            <fieldset class="crop-extra-fields">
+                <legend>Pickup location &amp; availability</legend>
+                <div class="form-grid">
+                    <label>District (optional)<input id="district" maxlength="100" autocomplete="address-level2" placeholder="Meerut"></label>
+                    <label>PIN code (optional)<input id="pin-code" inputmode="numeric" maxlength="6" pattern="[1-9][0-9]{5}" autocomplete="postal-code" placeholder="250001"></label>
+                    <label>Available until (optional)<input id="available-until" type="date"></label>
+                </div>
+                <details><summary>Add an approximate pickup point (optional)</summary>
+                    <p class="form-help">These coordinates are public. Enter a general meeting area, not your private home. They help nearby buyers find your crop.</p>
+                    <div class="form-grid"><label>Latitude<input id="latitude" type="number" min="-90" max="90" step="0.000001" inputmode="decimal"></label>
+                    <label>Longitude<input id="longitude" type="number" min="-180" max="180" step="0.000001" inputmode="decimal"></label></div>
+                </details>
+            </fieldset>
+            <div class="field-group">
+                <label for="crop-photo">Crop photo <span class="form-help">(optional)</span></label>
+                <input id="crop-photo" type="file" accept="image/jpeg,image/png" aria-describedby="crop-photo-help">
+                <small id="crop-photo-help" class="form-help">JPEG or PNG, up to 5 MB and 8 megapixels. Use a photo of the produce you are offering.</small>
+            </div>
+            <button id="submit-button" class="form-submit" type="submit">Publish listing <span aria-hidden="true">→</span></button>
+        </form>
+        <p id="message" role="status"></p>
+        <a id="login-link" href="/login" hidden>Sign in again</a>
+    </section>
+    <aside class="form-story" aria-labelledby="seller-story-title">
+        <p class="form-kicker">From your farm to their table</p>
+        <h2 id="seller-story-title">Good produce deserves a good connection.</h2>
+        <p>Let buyers know what you have available, set your price, and arrange pickup when an order is accepted.</p>
+        <ol class="form-story-list">
+            <li><strong>Make it clear.</strong><span>Add your crop, available quantity, and price per kilogram.</span></li>
+            <li><strong>Make it personal.</strong><span>A photo of your produce helps buyers see what you are offering.</span></li>
+            <li><strong>Stay in control.</strong><span>Review requests and update your listing from your account.</span></li>
+        </ol>
+        <a href="/my-listings.html">View my listings <span aria-hidden="true">→</span></a>
+    </aside>
 </main>
-<script src="/listing-photos.js"></script>
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
+<script src="/i18n.js?v=2026-10-19-world"></script>
+<script src="/photo-preview.js?v=2026-10-19-realworld"></script>
+<script src="/listing-photos.js?v=2026-10-19-realworld"></script>
 <script>
     const form = document.getElementById("listing-form");
     const submitButton = document.getElementById("submit-button");
     const message = document.getElementById("message");
     const loginLink = document.getElementById("login-link");
 
+    const photoPreview = attachCropPhotoPreview(document.getElementById("crop-photo"));
     let submitting = false;
+    const T = (key, params) => window.KhetI18n?.t(key, params) || key;
+    const harvestInput = document.getElementById("harvest-date");
+    const today = new Date();
+    harvestInput.max = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    const minimumInput = document.getElementById("minimum-quantity");
+    const quantityInput = document.getElementById("quantity");
+    function validateMinimum() {
+        minimumInput.setCustomValidity(Number(minimumInput.value) > Number(quantityInput.value)
+            ? T("Minimum order quantity cannot exceed available stock.") : "");
+    }
+    minimumInput.addEventListener("input", validateMinimum);
+    quantityInput.addEventListener("input", validateMinimum);
 
     async function readJson(response) {
         const contentType = response.headers.get("Content-Type") || "";
@@ -128,27 +142,35 @@
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
+        validateMinimum();
+        if (!form.reportValidity()) return;
         if (submitting) {
             return;
         }
 
         submitting = true;
+        form.setAttribute("aria-busy", "true");
         submitButton.disabled = true;
         loginLink.hidden = true;
-        message.textContent = "Publishing your listing…";
+        message.textContent = T("Publishing your listing…");
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 20000);
 
         try {
             const selectedPhoto = document.getElementById("crop-photo").files[0];
             validateListingPhoto(selectedPhoto);
+            const latitude=document.getElementById("latitude"),longitude=document.getElementById("longitude");
+            if (Boolean(latitude.value) !== Boolean(longitude.value)) throw new Error(T("Provide both latitude and longitude."));
 
             // Obtain a token belonging to this browser's session.
             const csrfResponse = await fetch("/api/csrf", {
                 headers: { "Accept": "application/json" },
-                redirect: "error"
+                redirect: "error",
+                signal: controller.signal
             });
 
             if (!csrfResponse.ok) {
-                throw new Error("Could not prepare the request. Refresh and try again.");
+                throw new Error(T("Could not prepare the request. Refresh and try again."));
             }
 
             const csrf = await readJson(csrfResponse);
@@ -157,12 +179,22 @@
                 produceName: document.getElementById("produce-name").value.trim(),
                 availableQuantityKg: Number(document.getElementById("quantity").value),
                 pricePerKg: Number(document.getElementById("price").value),
-                pickupArea: document.getElementById("pickup-area").value.trim()
+                pickupArea: document.getElementById("pickup-area").value.trim(),
+                variety: document.getElementById("crop-variety").value.trim() || null,
+                harvestDate: harvestInput.value || null,
+                minimumOrderQuantityKg: Number(minimumInput.value),
+                packagingDetails: document.getElementById("packaging-details").value.trim() || null,
+                district: document.getElementById("district").value.trim() || null,
+                pinCode: document.getElementById("pin-code").value.trim() || null,
+                latitude: document.getElementById("latitude").value === "" ? null : Number(document.getElementById("latitude").value),
+                longitude: document.getElementById("longitude").value === "" ? null : Number(document.getElementById("longitude").value),
+                availableUntil: document.getElementById("available-until").value || null
             };
 
             const response = await fetch("/api/listings", {
                 method: "POST",
                 redirect: "manual",
+                signal: controller.signal,
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -174,11 +206,11 @@
             if (response.type === "opaqueredirect"
                     || response.status === 401) {
                 loginLink.hidden = false;
-                throw new Error("Please sign in again before publishing.");
+                throw new Error(T("Please sign in again before publishing."));
             }
 
             if (response.status === 403) {
-                throw new Error("The request was rejected. Refresh the page and try again.");
+                throw new Error(T("The request was rejected. Refresh the page and try again."));
             }
 
             const data = await readJson(response);
@@ -203,7 +235,7 @@ if (selectedPhoto) {
         await uploadListingPhoto(data.id, selectedPhoto);
 
         message.textContent =
-            `Your ${data.produceName} listing and photo are published!`;
+            T("listingPhotoPublished", {crop:data.produceName});
     } catch (photoError) {
         message.textContent =
             `Listing #${data.id} was published, but the photo upload failed. ` +
@@ -212,17 +244,21 @@ if (selectedPhoto) {
     }
 } else {
     message.textContent =
-        `Your ${data.produceName} listing has been published successfully!`;
+        T("listingPublished", {crop:data.produceName});
 }
             form.reset();
         } catch (error) {
             message.textContent =
-                error instanceof TypeError
-                    ? "Connection problem. Check MySQL/API results before retrying; the request may have reached the server."
+                error instanceof TypeError || error.name === "AbortError"
+                    ? T("Connection interrupted. Check My listings before retrying; your listing may have been published.")
                     : error.message;
         } finally {
+            clearTimeout(timeout);
             submitting = false;
             submitButton.disabled = false;
+            form.removeAttribute("aria-busy");
+            message.tabIndex = -1;
+            message.focus();
         }
     });
 </script>

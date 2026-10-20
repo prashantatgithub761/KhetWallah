@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>My account | KhetWallah</title>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/account.js?v=2026-10-19-realworld" defer></script>
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
+</head>
+<body class="account-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="app-header"><div class="header-content">
+    <a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a>
+    <nav class="page-navigation" aria-label="Main navigation"><a href="/notifications.html">Notifications</a>
+        <a href="/">Browse crops</a><a href="/create-listing.html">Sell produce</a><a href="/my-listings.html">My listings</a><a href="/my-orders.html">My orders</a><a href="/received-orders.html">Received</a><a href="/account.html" aria-current="page">My account</a>
+    </nav>
+</div></header>
+<main id="main-content">
+    <div class="page-heading"><div class="page-heading-copy">
+        <p class="workspace-kicker">Your marketplace, at a glance</p>
+        <h1 id="account-heading">My account</h1>
+        <p id="account-intro" class="page-intro">Keep your crop listings, requests, and upcoming pickups in one place.</p>
+    </div><button id="refresh-account" type="button" class="secondary">Refresh overview</button></div>
+    <p id="account-message" role="status" aria-live="polite">Loading your account…</p>
+    <a id="account-login" class="button-link" href="/login?next=%2Faccount.html" hidden>Sign in to your account</a>
+    <div id="account-content" hidden>
+        <section aria-labelledby="overview-heading">
+            <h2 id="overview-heading">Your overview</h2>
+            <div class="dashboard-stats">
+                <a class="stat-card" href="/my-listings.html"><span>Active listings</span><strong id="active-listings">0</strong><small>Manage your produce <span aria-hidden="true">↗</span></small></a>
+                <a class="stat-card" href="/my-orders.html"><span>Pending purchases</span><strong id="pending-orders">0</strong><small>Awaiting farmer approval <span aria-hidden="true">↗</span></small></a>
+                <a class="stat-card" href="/received-orders.html"><span>Requests to review</span><strong id="pending-received">0</strong><small>Buyers waiting for your reply <span aria-hidden="true">↗</span></small></a>
+                <a class="stat-card" href="#upcoming-heading"><span>Upcoming pickups</span><strong id="upcoming-pickups">0</strong><small>Scheduled purchases and sales <span aria-hidden="true">↓</span></small></a>
+            </div>
+        </section>
+        <section class="dashboard-panel" aria-labelledby="upcoming-heading">
+            <div class="dashboard-panel-heading"><div><p class="workspace-kicker">Plan your next visit</p><h2 id="upcoming-heading" tabindex="-1">Upcoming pickups</h2></div><span id="pickup-summary" class="section-description"></span></div>
+            <p class="section-description">Accepted orders with a scheduled pickup from now onward. Times use your device’s time zone.</p>
+            <div id="pickup-list" class="pickup-list"></div>
+            <div id="pickup-empty" class="empty-state" hidden><h3>No upcoming pickups yet</h3><p>When an order is accepted and the farmer sets a future pickup time, you will see it here. Earlier pickups remain in your order pages.</p><a class="button-link secondary" href="/my-orders.html">Check my orders</a></div>
+        </section>
+        <section aria-labelledby="shortcuts-heading">
+            <div class="page-heading"><div><p class="workspace-kicker">Make your next move</p><h2 id="shortcuts-heading">Useful shortcuts</h2></div></div>
+            <div class="dashboard-shortcuts">
+                <a class="dashboard-panel" href="/"><span aria-hidden="true">🌱</span><h3>Find your next harvest</h3><p>Browse produce by crop, pickup area, and budget.</p><strong>Browse crops <span aria-hidden="true">↗</span></strong></a>
+                <a class="dashboard-panel" href="/create-listing.html"><span aria-hidden="true">🌾</span><h3>Bring your produce online</h3><p>Add the crop, available quantity, price, and pickup area.</p><strong>Post a crop <span aria-hidden="true">↗</span></strong></a>
+                <a class="dashboard-panel" href="/received-orders.html"><span aria-hidden="true">📦</span><h3>Keep buyers informed</h3><p>Review requests and arrange pickup details for accepted orders.</p><strong>Manage received orders <span aria-hidden="true">↗</span></strong></a>
+            </div>
+        </section>
+        <p id="account-updated" class="section-description"></p>
+    </div>
+</main>
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
+</body>
+</html>

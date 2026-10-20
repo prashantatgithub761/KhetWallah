@@ -1,0 +1,6 @@
+"use strict";
+(() => {
+ const {copy,request,mutate}=window.KhetMarketplace,form=document.getElementById("farmer-profile-form"),message=document.getElementById("profile-message"),retry=document.getElementById("profile-retry"),save=document.getElementById("profile-save"),link=document.getElementById("profile-public-link");let busy=false;
+ async function load(){if(busy)return;busy=true;retry.hidden=true;copy(message,"Loading your profile…");try{const p=await request("/api/me/farmer-profile");for(const name of ["farmName","bio","district","pinCode"])form.elements[name].value=p[name]||"";link.href=`/farmer.html?id=${p.farmerId}`;link.hidden=false;form.hidden=false;copy(message,"");}catch(e){copy(message,e.message);retry.hidden=false;}finally{busy=false;}}
+ form.addEventListener("submit",async e=>{e.preventDefault();if(busy||!form.reportValidity())return;busy=true;save.disabled=true;copy(message,"Saving your profile…");try{const payload=Object.fromEntries(["farmName","bio","district","pinCode"].map(n=>[n,form.elements[n].value.trim()]));await mutate("/api/me/farmer-profile","PUT",payload);copy(message,"Your farmer profile has been saved.");}catch(error){copy(message,error.message);}finally{busy=false;save.disabled=false;}});retry.addEventListener("click",load);load();
+})();

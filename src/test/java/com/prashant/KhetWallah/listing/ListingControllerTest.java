@@ -37,6 +37,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(username = "farmer@example.com", roles = "USER")
 class ListingControllerTest {
 
+    @Test
+    @org.springframework.security.test.context.support.WithAnonymousUser
+    void allowsGuestSearchWithPriceStockAndSortFilters() throws Exception {
+        when(listingService.getAllListings("Tomato", "Meerut", 1, 6,
+                new BigDecimal("10.00"), new BigDecimal("25.50"), true, "price_asc"))
+                .thenReturn(new ListingPageResponse(java.util.List.of(), 1, 6, 0, 0));
+        mockMvc.perform(get("/api/listings")
+                        .param("produceName", "Tomato").param("area", "Meerut")
+                        .param("page", "1").param("size", "6")
+                        .param("minPrice", "10.00").param("maxPrice", "25.50")
+                        .param("inStockOnly", "true").param("sort", "price_asc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page").value(1));
+        verify(listingService).getAllListings("Tomato", "Meerut", 1, 6,
+                new BigDecimal("10.00"), new BigDecimal("25.50"), true, "price_asc");
+    }
+
+    @Test
+    void rejectsMalformedPriceParametersBeforeCallingService() throws Exception {
+        mockMvc.perform(get("/api/listings").param("minPrice", "not-a-price"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid value for parameter: minPrice"));
+        verifyNoInteractions(listingService);
+    }
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -47,6 +72,13 @@ class ListingControllerTest {
     private AppUserRepository appUserRepository;
 
 
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUpActiveAccounts() {
+        org.mockito.Mockito.when(appUserRepository.findByEmail(org.mockito.ArgumentMatchers.anyString()))
+                .thenAnswer(invocation -> java.util.Optional.of(
+                        new com.prashant.KhetWallah.user.AppUser("Test user", invocation.getArgument(0), "test-hash")));
+    }
 
     @Test
     void rejectsNegativePriceBeforeCallingService() throws Exception {
@@ -197,7 +229,8 @@ class ListingControllerTest {
         UpdateListingRequest expectedRequest = new UpdateListingRequest(
                 new BigDecimal("30.00"),
                 new BigDecimal("20.00"),
-                "Jani"
+                "Jani",
+                null, null, null, null, null
         );
 
         ProduceListing updatedListing = new ProduceListing(
@@ -263,4 +296,30 @@ class ListingControllerTest {
 
         verifyNoInteractions(listingService);
     }
+    @Test
+    void rejectsNonPositiveMinimumOrderBeforeCallingService() throws Exception {
+        mockMvc.perform(post("/api/listings").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"produceName":"Onion","availableQuantityKg":20.00,"pricePerKg":25.00,
+                             "pickupArea":"Meerut","minimumOrderQuantityKg":0.00}
+                            """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.minimumOrderQuantityKg").isNotEmpty());
+        verifyNoInteractions(listingService);
+    }
+
+    @Test
+    void rejectsFutureHarvestDateBeforeCallingService() throws Exception {
+        mockMvc.perform(post("/api/listings").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"produceName":"Onion","availableQuantityKg":20.00,"pricePerKg":25.00,
+                             "pickupArea":"Meerut","harvestDate":"%s"}
+                            """.formatted(java.time.LocalDate.now().plusDays(1))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.harvestDate").isNotEmpty());
+        verifyNoInteractions(listingService);
+    }
+
 }

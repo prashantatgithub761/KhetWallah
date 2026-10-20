@@ -46,6 +46,10 @@ public class OrderEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    @Column(name = "pickup_revision", nullable = false)
+    private long pickupRevision;
+    public long getPickupRevision() { return pickupRevision; }
+
     protected OrderEntity() {
     }
 
@@ -178,6 +182,8 @@ public class OrderEntity {
             );
         }
 
+        if (!java.util.Objects.equals(this.pickupAt, pickupAt)
+                || !java.util.Objects.equals(this.pickupInstructions, pickupInstructions.strip())) pickupRevision++;
         this.pickupAt = pickupAt;
         this.pickupInstructions = pickupInstructions.strip();
     }

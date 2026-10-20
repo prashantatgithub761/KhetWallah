@@ -24,7 +24,7 @@ class OrderServiceTest {
     private final AppUserRepository users = mock(AppUserRepository.class);
 
     private final OrderService service =
-            new OrderService(orders, listings, users);
+            new OrderService(orders, listings, users, mock(OrderEmailNotifications.class));
 
     private ListingEntity listing;
 

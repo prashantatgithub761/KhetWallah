@@ -84,17 +84,26 @@
             outline-offset: 3px;
         }
     </style>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
 </head>
 
-<body>
-<main>
-    <nav aria-label="Main navigation">
-        <a href="/">← Browse crops</a>
-        <a href="/create-listing.html">Post a crop</a>
-    </nav>
-
-    <h1>My listings</h1>
-    <p>Your active crops and closed listing history.</p>
+<body class="listings-page">
+<a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><div class="header-content"><a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a><nav class="page-navigation" aria-label="Main navigation"><a href="/notifications.html">Notifications</a><a href="/account.html">My account</a><a href="/">Browse crops</a><a href="/create-listing.html">Sell produce</a><a href="/my-listings.html" aria-current="page">My listings</a><a href="/my-orders.html">My orders</a><a href="/received-orders.html">Received</a></nav></div></header>
+<main id="main-content">
+    <div class="page-heading">
+        <div class="page-heading-copy">
+            <p class="workspace-kicker">Your farm stand</p>
+            <h1>My listings</h1>
+            <p class="page-intro">Manage your available crops, update pickup details, and keep your listing history in one place.</p>
+        </div>
+        <div class="page-action"><a class="button-link" href="/create-listing.html">+ Post a crop</a></div>
+    </div>
 
     <p id="message" role="status">Loading your listings…</p>
     <a id="login-link" href="/login" hidden>Sign in again</a>
@@ -107,9 +116,12 @@
         <button id="next" type="button" disabled>Next</button>
         <button id="refresh" type="button">Refresh</button>
     </nav>
-</main>
-<script src="/listing-photos.js"></script>
+</main><footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
+<script src="/i18n.js?v=2026-10-19-world"></script>
+<script src="/photo-preview.js?v=2026-10-19-realworld"></script>
+<script src="/listing-photos.js?v=2026-10-19-realworld"></script>
 <script>
+    const T = (key, params) => window.KhetI18n?.t(key, params) || key;
     const container = document.getElementById("listings");
     const message = document.getElementById("message");
     const loginLink = document.getElementById("login-link");
@@ -145,7 +157,7 @@
         container.replaceChildren();
         container.setAttribute("aria-busy", "true");
         pageLabel.textContent = "";
-        message.textContent = "Loading your listings…";
+        message.textContent = T("Loading your listings…");
 
         try {
             const response = await fetch(
@@ -159,7 +171,7 @@
             if (response.type === "opaqueredirect"
                     || response.status === 401) {
                 loginLink.hidden = false;
-                message.textContent = "Please sign in to view your listings.";
+                message.textContent = T("Please sign in to view your listings.");
                 return;
             }
 
@@ -178,50 +190,80 @@
 
             for (const listing of data.content) {
                 const card = document.createElement("article");
-                card.className = "card";
+                card.className = "card managed-listing-card";
                 renderListingPhoto(card, listing);
+
+                const meta = document.createElement("div");
+                meta.className = "listing-card-meta";
+
+                addText(
+                    meta,
+                    "span",
+                    T(listing.status === "ACTIVE" && listing.availableUntil && listing.availableUntil < new Date().toLocaleDateString("en-CA") ? "Expired" : listing.status),
+                    listing.status === "ACTIVE"
+                        ? "badge active"
+                        : "badge closed"
+                );
+                addText(meta, "span", `Listing #${listing.id}`, "listing-reference");
+                card.appendChild(meta);
 
                 addText(card, "h2", listing.produceName);
 
                 addText(
                     card,
-                    "span",
-                    listing.status,
-                    listing.status === "ACTIVE"
-                        ? "badge active"
-                        : "badge closed"
+                    "p",
+                    `${currency.format(listing.pricePerKg)} / kg`,
+                    "price"
                 );
 
-                addText(card, "p", `Listing ID: ${listing.id}`);
-                addText(
-                    card,
-                    "p",
-                    `${currency.format(listing.pricePerKg)} / kg`
-                );
-                addText(
-                    card,
-                    "p",
-                    `Quantity: ${listing.availableQuantityKg} kg`
-                );
-                addText(card, "p", `Pickup: ${listing.pickupArea}`);
+                const facts = document.createElement("dl");
+                facts.className = "crop-facts";
+                for (const [label, value] of [
+                    ["Available", `${listing.availableQuantityKg} kg`],
+                    ["Pickup area", listing.pickupArea],
+                    ["Minimum order", `${listing.minimumOrderQuantityKg || 0.01} kg`],
+                    ...(listing.district ? [["District", listing.district]] : []),
+                    ...(listing.pinCode ? [["PIN code", listing.pinCode]] : []),
+                    ...(listing.availableUntil ? [["Available until", listing.availableUntil]] : []),
+                    ...(listing.variety ? [["Variety", listing.variety]] : []),
+                    ...(listing.harvestDate ? [["Harvest date (farmer-reported)", listing.harvestDate]] : []),
+                    ...(listing.packagingDetails ? [["Packaging", listing.packagingDetails]] : [])
+                ]) {
+                    const fact = document.createElement("div");
+                    addText(fact, "dt", T(label));
+                    addText(fact, "dd", value);
+                    facts.appendChild(fact);
+                }
+                card.appendChild(facts);
 
-                if (listing.status === "ACTIVE") {
+                if (!["CLOSED","HIDDEN"].includes(listing.status)) {
+                   const actions = document.createElement("div");
+                   actions.className = "listing-card-actions";
                    const edit = document.createElement("button");
                    edit.type = "button";
-                   edit.textContent = "Edit";
-                   edit.addEventListener("click", () => editListing(listing));
+                   edit.textContent = T("Edit details");
+                   edit.setAttribute("aria-label", `Edit ${listing.produceName} listing #${listing.id}`);
+                   edit.addEventListener("click", () => editListing(listing, card));
 
                    const close = document.createElement("button");
                    close.type = "button";
-                   close.textContent = "Close listing";
-                   close.style.marginLeft = "10px";
+                   close.textContent = T("Close listing");
+                   close.className = "secondary";
+                   close.setAttribute("aria-label", `Close ${listing.produceName} listing #${listing.id}`);
                    close.addEventListener("click", () => {
                        if (confirm(`Close your ${listing.produceName} listing?`)) {
                            changeListing(`/api/listings/${listing.id}/close`, "POST");
                        }
                    });
 
-                   card.append(edit, close);
+                   actions.append(edit);
+                   for (const [action,label] of (listing.status === "ACTIVE" ? [["pause","Pause listing"],["sold-out","Mark sold out"]] : [["resume","Resume listing"],["sold-out","Mark sold out"]])) {
+                       if (listing.status === "SOLD_OUT" && action === "sold-out") continue;
+                       const control=document.createElement("button");control.type="button";control.className="secondary";control.textContent=T(label);
+                       control.addEventListener("click",()=>changeListing(`/api/listings/${listing.id}/${action}`,"POST"));actions.append(control);
+                   }
+                   actions.append(close);
+                   card.appendChild(actions);
                    addListingPhotoUploader(card, listing);
                 }
 
@@ -229,18 +271,18 @@
             }
 
             message.textContent = data.totalElements === 0
-                ? "You haven't posted any crops yet. Choose Post a crop to begin."
-                : `${data.totalElements} listing(s), including active and closed.`;
+                ? T("You haven't posted any crops yet. Choose Post a crop to begin.")
+                : T("listingCount", {count:data.totalElements});
 
             pageLabel.textContent = data.totalPages === 0
-                ? "No pages"
-                : `Page ${data.page + 1} of ${data.totalPages}`;
+                ? T("No pages")
+                : T("pageOf", {page:data.page+1,total:data.totalPages});
 
             previousButton.disabled = data.page === 0;
             nextButton.disabled = data.page + 1 >= data.totalPages;
         } catch (error) {
             message.textContent =
-                "We couldn't load your listings. Please try Refresh.";
+                T("We couldn't load your listings. Please try Refresh.");
         } finally {
             refreshButton.disabled = false;
             container.setAttribute("aria-busy", "false");
@@ -260,40 +302,131 @@
     });
 
     loadMyListings(0);
+    document.addEventListener("khet:languagechange", () => loadMyListings(currentPage));
 
     let saving = false;
 
-function editListing(listing) {
+function editListing(listing, card) {
     if (saving) return;
-
-    const quantity = prompt(
-        "Available quantity in kg:",
-        listing.availableQuantityKg
-    );
-    if (quantity === null) return;
-
-    const price = prompt("Price per kg in ₹:", listing.pricePerKg);
-    if (price === null) return;
-
-    const area = prompt("Pickup area:", listing.pickupArea);
-    if (area === null) return;
-
-    if (!quantity.trim() || !price.trim()
-            || !Number.isFinite(Number(quantity))
-            || !Number.isFinite(Number(price))
-            || Number(quantity) < 0
-            || Number(price) <= 0
-            || !area.trim()) {
-        message.textContent =
-            "Enter a valid quantity, a positive price, and a pickup area.";
+    const existingForm = card.querySelector(".listing-edit-form");
+    if (existingForm) {
+        existingForm.querySelector("input")?.focus();
         return;
     }
 
-    changeListing(`/api/listings/${listing.id}/details`, "PUT", {
-        availableQuantityKg: Number(quantity),
-        pricePerKg: Number(price),
-        pickupArea: area.trim()
+    const form = document.createElement("form");
+    form.className = "listing-edit-form";
+    form.setAttribute("aria-label", `Edit ${listing.produceName} listing`);
+    const heading = document.createElement("h3");
+    heading.textContent = T("Update your listing");
+    form.appendChild(heading);
+
+    function addField(labelText, name, value, type, min, max, step) {
+        const label = document.createElement("label");
+        label.textContent = T(labelText);
+        const input = document.createElement("input");
+        input.name = name;
+        input.type = type;
+        input.value = String(value ?? "");
+        input.required = true;
+        if (type === "number") {
+            input.min = min;
+            input.max = max;
+            input.step = step;
+            input.inputMode = "decimal";
+        } else {
+            input.maxLength = 150;
+            input.autocomplete = "address-level2";
+        }
+        label.appendChild(input);
+        form.appendChild(label);
+        return input;
+    }
+
+    const quantity = addField("Available quantity (kg)", "quantity", listing.availableQuantityKg, "number", "0", "99999999.99", "0.01");
+    addField("Price per kg (₹)", "price", listing.pricePerKg, "number", "0.01", "99999999.99", "0.01");
+    const area = addField("Pickup area", "area", listing.pickupArea, "text");
+    area.addEventListener("input", () => area.setCustomValidity(""));
+
+    const district=addField("District (optional)","district",listing.district,"text");district.required=false;district.maxLength=100;
+    const pin=addField("PIN code (optional)","pinCode",listing.pinCode,"text");pin.required=false;pin.maxLength=6;pin.pattern="[1-9][0-9]{5}";pin.inputMode="numeric";
+    const until=addField("Available until (optional)","availableUntil",listing.availableUntil,"date");until.required=false;
+    const locationNote=document.createElement("p");locationNote.className="form-help";locationNote.textContent=T("Approximate coordinates are public. Use a general meeting area, not your private home.");form.append(locationNote);
+    const lat=addField("Latitude","latitude",listing.latitude,"number","-90","90","0.000001");lat.required=false;
+    const lng=addField("Longitude","longitude",listing.longitude,"number","-180","180","0.000001");lng.required=false;
+    const variety = addField("Variety (optional)", "variety", listing.variety, "text");
+    variety.required = false;
+    variety.maxLength = 100;
+    variety.removeAttribute("autocomplete");
+    const harvest = addField("Harvest date (farmer-reported)", "harvestDate", listing.harvestDate, "date");
+    harvest.required = false;
+    harvest.removeAttribute("autocomplete");
+    const today = new Date();
+    harvest.max = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    const minimum = addField("Minimum order (kg)", "minimum", listing.minimumOrderQuantityKg || 0.01, "number", "0.01", "99999999.99", "0.01");
+    const packagingLabel = document.createElement("label");
+    packagingLabel.textContent = T("Packaging details (optional)");
+    const packaging = document.createElement("textarea");
+    packaging.name = "packaging";
+    packaging.maxLength = 300;
+    packaging.rows = 3;
+    packaging.value = listing.packagingDetails || "";
+    packagingLabel.appendChild(packaging);
+    form.appendChild(packagingLabel);
+    const note = document.createElement("p");
+    note.className = "form-help";
+    note.textContent = T("Optional details help buyers plan. Harvest dates are provided by the farmer, not independently verified.");
+    form.appendChild(note);
+    function validateMinimum() {
+        minimum.setCustomValidity(Number(quantity.value) > 0 && Number(minimum.value) > Number(quantity.value)
+            ? T("Minimum order quantity cannot exceed available stock.") : "");
+    }
+    minimum.addEventListener("input", validateMinimum);
+    quantity.addEventListener("input", validateMinimum);
+
+    const actions = document.createElement("div");
+    actions.className = "listing-edit-actions";
+    const save = document.createElement("button");
+    save.type = "submit";
+    save.textContent = T("Save changes");
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "secondary";
+    cancel.textContent = T("Cancel");
+    cancel.addEventListener("click", () => form.remove());
+    actions.append(save, cancel);
+    form.appendChild(actions);
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+        validateMinimum();
+        if (saving || !form.reportValidity()) return;
+        if(Boolean(lat.value)!==Boolean(lng.value)) {message.textContent=T("Provide both latitude and longitude.");return;}
+        if (!area.value.trim()) {
+            area.setCustomValidity("Enter the pickup area.");
+            area.reportValidity();
+            return;
+        }
+        area.setCustomValidity("");
+        changeListing(`/api/listings/${listing.id}/details`, "PUT", {
+            availableQuantityKg: Number(quantity.value),
+            pricePerKg: Number(form.elements.price.value),
+            pickupArea: area.value.trim(),
+            variety: variety.value.trim(),
+            harvestDate: harvest.value || null,
+            clearHarvestDate: Boolean(listing.harvestDate && !harvest.value),
+            minimumOrderQuantityKg: Number(minimum.value),
+            packagingDetails: packaging.value.trim(),
+            district: district.value.trim(), pinCode: pin.value.trim(),
+            latitude: lat.value === "" ? null : Number(lat.value), longitude: lng.value === "" ? null : Number(lng.value),
+            clearLocation: lat.value === "" && lng.value === "",
+            availableUntil: until.value || null, clearAvailableUntil: !until.value
+        });
     });
+
+    card.appendChild(form);
+    form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    quantity.focus({ preventScroll: true });
 }
 
 async function changeListing(url, method, body) {
@@ -302,7 +435,7 @@ async function changeListing(url, method, body) {
 
     const buttons = [...container.querySelectorAll("button")];
     buttons.forEach(button => button.disabled = true);
-    message.textContent = "Saving…";
+    message.textContent = T("Saving…");
 
     try {
         const tokenResponse = await fetch("/api/csrf", {

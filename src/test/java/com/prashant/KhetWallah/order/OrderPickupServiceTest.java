@@ -23,7 +23,7 @@ class OrderPickupServiceTest {
     private final OrderRepository orders = mock(OrderRepository.class);
     private final ListingRepository listings = mock(ListingRepository.class);
     private final AppUserRepository users = mock(AppUserRepository.class);
-    private final OrderService service = new OrderService(orders, listings, users);
+    private final OrderService service = new OrderService(orders, listings, users, mock(OrderEmailNotifications.class));
     private OrderEntity order;
     private ListingEntity listing;
     private final Instant future = Instant.now().plusSeconds(86400);

@@ -18,15 +18,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ListingRepository listingRepository;
     private final AppUserRepository userRepository;
+    private final OrderEmailNotifications emails;
 
     public OrderService(
             OrderRepository orderRepository,
             ListingRepository listingRepository,
-            AppUserRepository userRepository
+            AppUserRepository userRepository,
+            OrderEmailNotifications emails
     ) {
         this.orderRepository = orderRepository;
         this.listingRepository = listingRepository;
         this.userRepository = userRepository;
+        this.emails = emails;
     }
 
     @Transactional
@@ -47,10 +50,10 @@ public class OrderService {
                         "Listing not found"
                 ));
 
-        if (listing.getStatus() != ListingStatus.ACTIVE) {
+        if (!listing.isPubliclyAvailable()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Listing is closed"
+                    "This listing is paused, expired or unavailable"
             );
         }
 
@@ -76,6 +79,10 @@ public class OrderService {
             );
         }
 
+        if (request.quantityKg().compareTo(listing.getMinimumOrderQuantityKg()) < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Minimum order quantity is " + listing.getMinimumOrderQuantityKg().toPlainString() + " kg");
+        }
         if (listing.getAvailableQuantityKg()
                 .compareTo(request.quantityKg()) < 0) {
             throw new ResponseStatusException(
@@ -93,6 +100,7 @@ public class OrderService {
         );
 
         OrderEntity saved = orderRepository.saveAndFlush(order);
+        emails.queue(saved, OrderEmailNotifications.Event.CREATED);
 
         return OrderResponse.from(saved);
     }
@@ -118,6 +126,20 @@ public class OrderService {
                 responses.getTotalPages()
         );
     }
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderForParticipant(Long orderId, String authenticatedEmail) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+        boolean buyer = order.getBuyer().getEmail().equals(authenticatedEmail);
+        boolean farmer = order.getListing().getOwner() != null
+                && order.getListing().getOwner().getEmail().equals(authenticatedEmail);
+        if (!buyer && !farmer) {
+            // Do not disclose whether another account's order exists.
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
+        }
+        return OrderResponse.from(order);
+    }
+
     @Transactional
     public void cancelOrder(
             Long orderId,
@@ -157,6 +179,7 @@ public class OrderService {
 
         listing.restoreStock(order.getQuantityKg());
         order.cancel();
+        emails.queue(order, OrderEmailNotifications.Event.CANCELLED);
     }
     @Transactional(readOnly = true)
     public OrderPageResponse getReceivedOrders(
@@ -218,6 +241,7 @@ public class OrderService {
         }
 
         order.accept();
+        emails.queue(order, OrderEmailNotifications.Event.ACCEPTED);
     }
 
     @Transactional
@@ -244,6 +268,7 @@ public class OrderService {
 
         listing.restoreStock(order.getQuantityKg());
         order.reject();
+        emails.queue(order, OrderEmailNotifications.Event.REJECTED);
     }
     @Transactional
     public void schedulePickup(
@@ -257,8 +282,12 @@ public class OrderService {
                     HttpStatus.CONFLICT, "Only accepted orders can have pickup details"
             );
         }
+        boolean changed = !java.util.Objects.equals(order.getPickupAt(), request.pickupAt())
+                || !java.util.Objects.equals(order.getPickupInstructions(),
+                        request.pickupInstructions() == null ? null : request.pickupInstructions().strip());
         try {
             order.schedulePickup(request.pickupAt(), request.pickupInstructions());
+            if (changed) emails.queue(order, OrderEmailNotifications.Event.PICKUP_UPDATED);
         } catch (IllegalArgumentException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
         }
@@ -291,5 +320,6 @@ public class OrderService {
             );
         }
         order.complete();
+        emails.queue(order, OrderEmailNotifications.Event.COMPLETED);
     }
 }

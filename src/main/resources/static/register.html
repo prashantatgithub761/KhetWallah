@@ -4,151 +4,245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Create account | KhetWallah</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            padding: 24px;
-            background: #f5f7f2;
-            color: #203326;
-            font-family: Arial, sans-serif;
-            line-height: 1.5;
-        }
-        main {
-            max-width: 480px;
-            margin: 32px auto;
-            padding: 28px;
-            background: white;
-            border: 1px solid #dbe4d9;
-            border-radius: 12px;
-        }
-        a { color: #174c35; }
-        label { display: block; margin-top: 18px; font-weight: bold; }
-        input {
-            width: 100%;
-            margin-top: 6px;
-            padding: 12px;
-            border: 1px solid #879b8b;
-            border-radius: 6px;
-            font: inherit;
-        }
-        button {
-            margin-top: 24px;
-            padding: 12px 20px;
-            background: #174c35;
-            color: white;
-            border: 0;
-            border-radius: 8px;
-            font: inherit;
-            cursor: pointer;
-        }
-        button:disabled { opacity: 0.5; cursor: default; }
-        :focus-visible { outline: 3px solid #d49b24; outline-offset: 3px; }
-        #message { white-space: pre-line; }
-    </style>
+    <link rel="stylesheet" href="/theme.css?v=2026-10-19-realworld">
+    <script src="/i18n.js?v=2026-10-19-realworld"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#213f32">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="/enhancements.css?v=20261020-marketplace">
+    <script src="/app-shell.js?v=20261020-marketplace" defer></script>
 </head>
-<body>
-<main>
-    <a href="/">← Browse crops</a>
-    <h1>Create your account</h1>
-    <p>Use one account to buy and sell produce.</p>
+<body class="form-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="app-header">
+    <div class="header-content">
+        <a class="brand" href="/" aria-label="KhetWallah home"><span class="brand-mark" aria-hidden="true">🌾</span> KhetWallah<span class="brand-dot">.</span></a>
+        <nav class="page-navigation" aria-label="Main navigation"><a href="/">Browse crops</a><a href="/login">Sign in <span aria-hidden="true">→</span></a></nav>
+    </div>
+</header>
+<main id="main-content" class="form-workspace">
 
-    <form id="register-form">
-        <label for="display-name">Display name</label>
-        <input id="display-name" required maxlength="100"
-               autocomplete="name">
-
-        <label for="email">Email</label>
-        <input id="email" type="email" required maxlength="254"
-               autocomplete="email">
-
-        <label for="password">Password</label>
-        <input id="password" type="password" required
-               minlength="15" maxlength="128"
-               autocomplete="new-password" aria-describedby="password-help">
-        <small id="password-help">Use 15–128 characters.</small>
-
-        <label for="confirm-password">Confirm password</label>
-        <input id="confirm-password" type="password" required
-               minlength="15" maxlength="128"
-               autocomplete="new-password">
-
-        <button id="submit-button" type="submit">Create account</button>
-    </form>
-
-    <p id="message" role="status"></p>
-    <p>Already registered? <a href="/login">Sign in</a></p>
+    <section class="form-surface" aria-labelledby="register-heading">
+        <p class="form-kicker">Welcome to KhetWallah</p>
+        <h1 id="register-heading">Grow your connections.</h1>
+        <p class="form-help">Create an account to buy and sell produce. We will send a six-digit code to verify your email.</p>
+        <form id="register-form">
+            <div class="field-group">
+                <label for="display-name">Display name</label>
+                <input id="display-name" required maxlength="100" autocomplete="name" placeholder="Your name">
+            </div>
+            <div class="field-group">
+                <label for="email">Email address</label>
+                <input id="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com">
+            </div>
+            <div class="field-group">
+                <label for="password">Password</label>
+                <input id="password" type="password" required minlength="15" maxlength="128" autocomplete="new-password" aria-describedby="password-help">
+                <small id="password-help" class="form-help">Use 15–128 characters. A memorable phrase can be easier to remember.</small>
+            </div>
+            <div class="field-group">
+                <label for="confirm-password">Confirm password</label>
+                <input id="confirm-password" type="password" required minlength="15" maxlength="128" autocomplete="new-password">
+            </div>
+            <section id="verification-panel" class="verification-panel" hidden aria-labelledby="verification-heading">
+                <p class="form-kicker">One more step</p>
+                <h2 id="verification-heading" class="form-section-title">Check your email</h2>
+                <p id="verification-hint" class="form-help"></p>
+                <div class="field-group">
+                    <label for="verification-code">Six-digit verification code</label>
+                    <input id="verification-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" aria-describedby="verification-hint" placeholder="000000">
+                </div>
+                <div class="verification-actions">
+                    <button id="resend-code" type="button" class="secondary">Resend code</button>
+                    <button id="change-email" type="button" class="secondary">Use another email</button>
+                </div>
+            </section>
+            <button id="submit-button" class="form-submit" type="submit">Send verification code</button>
+        </form>
+        <p id="message" role="status"></p>
+        <a id="signup-success" class="button-link" href="/login" hidden>Sign in to KhetWallah →</a>
+        <p class="form-help">Already have an account? <a href="/login">Sign in <span aria-hidden="true">→</span></a></p>
+    </section>
+    <aside class="form-story" aria-labelledby="join-story-title">
+        <p class="form-kicker">A marketplace with people at its heart</p>
+        <h2 id="join-story-title">Meet the people behind your produce.</h2>
+        <p>One account connects you with farmers and buyers. Find crops nearby or give your own produce a place to be discovered.</p>
+        <ol class="form-story-list">
+            <li><strong>Explore what is available.</strong><span>Compare crop listings, prices, and pickup areas.</span></li>
+            <li><strong>Connect directly.</strong><span>Request produce or publish a listing of your own.</span></li>
+            <li><strong>Plan the pickup.</strong><span>Follow your orders and agree on pickup details.</span></li>
+        </ol>
+        <a href="/">Explore the marketplace <span aria-hidden="true">→</span></a>
+    </aside>
 </main>
-
+<footer class="site-footer"><strong>🌾 KhetWallah</strong><span>Good food. Direct connections.</span><small class="builder-credit">Built by <b>Prashant</b></small></footer>
 <script>
+const T = (key, params) => window.KhetI18n?.t(key, params) || key;
+
     const form = document.getElementById("register-form");
     const button = document.getElementById("submit-button");
     const message = document.getElementById("message");
-
+    const emailInput = document.getElementById("email");
+    const codeInput = document.getElementById("verification-code");
+    const panel = document.getElementById("verification-panel");
+    const resend = document.getElementById("resend-code");
+    const changeEmail = document.getElementById("change-email");
+    let challengeId = null;
+    let resendAt = 0;
     let submitting = false;
+    const storageKey = "khetwallah.signup-verification";
 
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
+    function updateResendButton() {
+        const seconds = Math.max(0, Math.ceil((resendAt - Date.now()) / 1000));
+        resend.disabled = submitting || seconds > 0;
+        resend.textContent = seconds ? T("Resend in {seconds}s",{seconds}) : T("Resend code");
+    }
+    setInterval(updateResendButton, 1000);
+
+    function setBusy(value) {
+        submitting = value;
+        button.disabled = value;
+        changeEmail.disabled = value;
+        form.querySelectorAll("input").forEach(input => input.disabled = value);
+        form.setAttribute("aria-busy", String(value));
+        updateResendButton();
+    }
+
+    function showVerification(data, email, restore = false) {
+        challengeId = data.challengeId;
+        emailInput.value = email;
+        emailInput.readOnly = true;
+        panel.hidden = false;
+        codeInput.required = true;
+        button.textContent = T("Verify email and create account");
+        resendAt = restore ? data.resendAt : Date.now() + data.resendAfterSeconds * 1000;
+        document.getElementById("verification-hint").textContent =
+            `Enter the code sent to ${email}. It expires at ${new Date(data.expiresAt).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}. Check Spam if needed. Only the newest code will work.`;
+        try {
+            sessionStorage.setItem(storageKey, JSON.stringify({
+                challengeId, email, expiresAt: data.expiresAt, resendAt
+            }));
+        } catch (_) { /* Signup still works when browser storage is unavailable. */ }
+        updateResendButton();
+    }
+
+    function clearVerification() {
+        challengeId = null;
+        resendAt = 0;
+        emailInput.readOnly = false;
+        panel.hidden = true;
+        codeInput.required = false;
+        codeInput.value = "";
+        button.textContent = T("Send verification code");
+        try { sessionStorage.removeItem(storageKey); } catch (_) {}
+    }
+
+    try {
+        const stored = JSON.parse(sessionStorage.getItem(storageKey));
+        if (stored && stored.challengeId && stored.email && Date.parse(stored.expiresAt) > Date.now()) {
+            showVerification(stored, stored.email, true);
+            message.textContent = T("Enter your name and password again, then use the code from your email.");
+        } else {
+            sessionStorage.removeItem(storageKey);
+        }
+    } catch (_) { /* No credentials or OTPs are kept in browser storage. */ }
+
+    changeEmail.addEventListener("click", () => {
         if (submitting) return;
+        clearVerification();
+        message.textContent = T("Enter your email address and request a new code.");
+        emailInput.focus();
+    });
 
+    async function post(url, payload) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 20000);
+        try {
+            const tokenResponse = await fetch("/api/csrf", {redirect:"manual", signal:controller.signal});
+            if (tokenResponse.type === "opaqueredirect") {
+                throw new Error("The server redirected the security-token request to sign-in. Restart the updated KhetWallah app, then reload this page.");
+            }
+            if (!tokenResponse.ok) throw new Error("Couldn't prepare your request. Refresh and try again.");
+            const csrf = await tokenResponse.json().catch(() => null);
+            if (!csrf || typeof csrf.headerName !== "string" || typeof csrf.token !== "string") {
+                throw new Error("The server returned an unexpected security-token response. Reload after restarting the app.");
+            }
+            const response = await fetch(url, {
+                method:"POST", redirect:"manual", signal:controller.signal,
+                headers:{"Content-Type":"application/json", "Accept":"application/json", [csrf.headerName]:csrf.token},
+                body:JSON.stringify(payload)
+            });
+            if (response.type === "opaqueredirect" || response.status === 401) {
+                throw new Error("The server redirected registration to sign-in. Stop the old app on port 8080, rebuild, and restart KhetWallahApplication, then reload this page.");
+            }
+            const data = await response.json().catch(() => null);
+            if (!data || typeof data !== "object") {
+                throw new Error(`Unexpected server response (${response.status}). Restart the updated application and reload.`);
+            }
+            if (!response.ok) throw new Error(Object.values(data.fieldErrors || {}).join(" ") || data.message || `Request failed (${response.status}).`);
+            if (url !== "/api/auth/register" && (typeof data.challengeId !== "string"
+                    || !Number.isFinite(Date.parse(data.expiresAt))
+                    || !Number.isFinite(data.resendAfterSeconds))) {
+                throw new Error("The running server returned an older or incomplete verification response. Rebuild and restart KhetWallahApplication.");
+            }
+            return data;
+        } catch (error) {
+            if (error.name === "AbortError") {
+                throw new Error("The server took too long to respond. Check your inbox or try signing in before retrying; the request may have completed.");
+            }
+            if (error instanceof TypeError) {
+                throw new Error("Could not reach KhetWallah. Confirm the app is running at localhost:8080, then reload. If creating an account, try signing in before retrying.");
+            }
+            throw error;
+        } finally { clearTimeout(timer); }
+    }
+
+    resend.addEventListener("click", async () => {
+        if (submitting || !challengeId || Date.now() < resendAt) return;
+        setBusy(true);
+        message.textContent = T("Requesting a new code\u2026");
+        try {
+            const data = await post("/api/auth/verification/resend", {challengeId});
+            showVerification(data, emailInput.value);
+            codeInput.value = "";
+            message.textContent = T("A new code has been sent. Use this latest code.");
+        } catch (error) { message.textContent = error.message; }
+        finally { setBusy(false); }
+    });
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (submitting || !form.reportValidity()) return;
         const password = document.getElementById("password").value;
-        const confirmation = document.getElementById("confirm-password").value;
-
-        if (password !== confirmation) {
-            message.textContent = "The passwords do not match.";
+        if (password !== document.getElementById("confirm-password").value) {
+            message.textContent = T("The passwords do not match.");
             return;
         }
-
-        submitting = true;
-        button.disabled = true;
-        message.textContent = "Creating your account…";
-
+        const email = emailInput.value.trim();
+        const payload = {
+            displayName:document.getElementById("display-name").value.trim(),
+            email, password, challengeId, code:codeInput.value.trim()
+        };
+        setBusy(true);
+        message.textContent = challengeId ? T("Verifying your email and creating your account…") : T("Sending your verification code…");
         try {
-            const tokenResponse = await fetch("/api/csrf", {
-                redirect: "error"
-            });
-
-            if (!tokenResponse.ok) {
-                throw new Error("Could not prepare registration. Refresh and try again.");
+            if (!challengeId) {
+                // Start sends only the email. The account password stays in this form until verification.
+                const data = await post("/api/auth/verification/start", {email});
+                showVerification(data, email);
+                message.textContent = T("Code sent. Your account will be created after verification.");
+            } else {
+                await post("/api/auth/register", payload);
+                clearVerification();
+                form.reset();
+                form.hidden = true;
+                document.getElementById("signup-success").hidden = false;
+                message.textContent = T("Email verified and account created. You can now sign in.");
             }
-
-            const csrf = await tokenResponse.json();
-
-            const response = await fetch("/api/auth/register", {
-                method: "POST",
-                redirect: "error",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    [csrf.headerName]: csrf.token
-                },
-                body: JSON.stringify({
-                    displayName: document.getElementById("display-name").value.trim(),
-                    email: document.getElementById("email").value.trim(),
-                    password: password
-                })
-            });
-
-            const data = await response.json().catch(() => ({}));
-
-            if (!response.ok) {
-                const details = Object.values(data.fieldErrors || {});
-                throw new Error(
-                    details.join("\n") || data.message
-                    || `Registration failed (${response.status}).`
-                );
-            }
-
-            form.reset();
-            message.textContent = "Account created successfully. You can now sign in.";
-        } catch (error) {
-            message.textContent = error instanceof TypeError
-                ? "Connection problem. The account may have been created; try signing in before registering again."
-                : error.message;
-        } finally {
-            submitting = false;
-            button.disabled = false;
-        }
+        } catch (error) { message.textContent = error.message; }
+        finally { setBusy(false); }
+        if (challengeId && !panel.hidden) codeInput.focus();
     });
 </script>
 </body>

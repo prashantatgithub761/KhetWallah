@@ -40,6 +40,13 @@ class OrderControllerTest {
     @MockitoBean
     private AppUserRepository userRepository;
 
+    @org.junit.jupiter.api.BeforeEach
+    void setUpActiveAccounts() {
+        org.mockito.Mockito.when(userRepository.findByEmail(org.mockito.ArgumentMatchers.anyString()))
+                .thenAnswer(invocation -> java.util.Optional.of(
+                        new com.prashant.KhetWallah.user.AppUser("Test user", invocation.getArgument(0), "test-hash")));
+    }
+
     @Test
     void createsOrderUsingAuthenticatedBuyer() throws Exception {
         CreateOrderRequest request = new CreateOrderRequest(
@@ -54,8 +61,8 @@ class OrderControllerTest {
                         new BigDecimal("24.00"),
                         new BigDecimal("240.0000"),
                         OrderStatus.PENDING,
-                        null,
-                        null
+                        null, null,
+                        "Tomato", "Test farmer", "Test buyer", null, "Meerut", null
                 ));
 
         mockMvc.perform(post("/api/orders")
